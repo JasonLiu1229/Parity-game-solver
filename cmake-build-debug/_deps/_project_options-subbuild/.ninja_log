@@ -1,0 +1,21 @@
+# ninja log v6
+0	4	1730372097027068895	_project_options-populate-prefix/src/_project_options-populate-stamp/_project_options-populate-mkdir	ed63a34e8e0f4a0c
+0	4	1730372097027068895	/home/jason/Documents/School/SV-Project/cmake-build-debug/_deps/_project_options-subbuild/_project_options-populate-prefix/src/_project_options-populate-stamp/_project_options-populate-mkdir	ed63a34e8e0f4a0c
+5	697	1730372097719072169	_project_options-populate-prefix/src/_project_options-populate-stamp/_project_options-populate-download	99e4d23c74ff7e67
+5	697	1730372097719072169	/home/jason/Documents/School/SV-Project/cmake-build-debug/_deps/_project_options-subbuild/_project_options-populate-prefix/src/_project_options-populate-stamp/_project_options-populate-download	99e4d23c74ff7e67
+697	707	1730372097727072207	_project_options-populate-prefix/src/_project_options-populate-stamp/_project_options-populate-update	ab11b672a942abf5
+697	707	1730372097727072207	/home/jason/Documents/School/SV-Project/cmake-build-debug/_deps/_project_options-subbuild/_project_options-populate-prefix/src/_project_options-populate-stamp/_project_options-populate-update	ab11b672a942abf5
+707	714	1730372097737072254	_project_options-populate-prefix/src/_project_options-populate-stamp/_project_options-populate-patch	35ce5920c71dfa61
+707	714	1730372097737072254	/home/jason/Documents/School/SV-Project/cmake-build-debug/_deps/_project_options-subbuild/_project_options-populate-prefix/src/_project_options-populate-stamp/_project_options-populate-patch	35ce5920c71dfa61
+714	721	1730372097743072283	_project_options-populate-prefix/src/_project_options-populate-stamp/_project_options-populate-configure	366609bc29d22192
+714	721	1730372097743072283	/home/jason/Documents/School/SV-Project/cmake-build-debug/_deps/_project_options-subbuild/_project_options-populate-prefix/src/_project_options-populate-stamp/_project_options-populate-configure	366609bc29d22192
+721	727	1730372097750072316	_project_options-populate-prefix/src/_project_options-populate-stamp/_project_options-populate-build	fb006fd4cd4f9933
+721	727	1730372097750072316	/home/jason/Documents/School/SV-Project/cmake-build-debug/_deps/_project_options-subbuild/_project_options-populate-prefix/src/_project_options-populate-stamp/_project_options-populate-build	fb006fd4cd4f9933
+727	731	1730372097754072335	_project_options-populate-prefix/src/_project_options-populate-stamp/_project_options-populate-install	8976a56abe7f8664
+727	731	1730372097754072335	/home/jason/Documents/School/SV-Project/cmake-build-debug/_deps/_project_options-subbuild/_project_options-populate-prefix/src/_project_options-populate-stamp/_project_options-populate-install	8976a56abe7f8664
+732	738	1730372097760072363	_project_options-populate-prefix/src/_project_options-populate-stamp/_project_options-populate-test	2d14fd619b395a6d
+732	738	1730372097760072363	/home/jason/Documents/School/SV-Project/cmake-build-debug/_deps/_project_options-subbuild/_project_options-populate-prefix/src/_project_options-populate-stamp/_project_options-populate-test	2d14fd619b395a6d
+738	745	1730372097767072396	CMakeFiles/_project_options-populate-complete	e545a916392d887a
+738	745	1730372097767072396	_project_options-populate-prefix/src/_project_options-populate-stamp/_project_options-populate-done	e545a916392d887a
+738	745	1730372097767072396	/home/jason/Documents/School/SV-Project/cmake-build-debug/_deps/_project_options-subbuild/CMakeFiles/_project_options-populate-complete	e545a916392d887a
+738	745	1730372097767072396	/home/jason/Documents/School/SV-Project/cmake-build-debug/_deps/_project_options-subbuild/_project_options-populate-prefix/src/_project_options-populate-stamp/_project_options-populate-done	e545a916392d887a
