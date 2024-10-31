@@ -1,5 +1,5 @@
-#ifndef PARSER_H
-#define PARSER_H
+#ifndef PARSER_HH
+#define PARSER_HH
 
 #include <iostream>
 #include <spot/parseaut/public.hh>
@@ -13,4 +13,4 @@ class Parser {
 
 
 
-#endif // PARSER_H
+#endif // PARSER_HH
