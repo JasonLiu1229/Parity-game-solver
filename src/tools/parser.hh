@@ -8,7 +8,11 @@
 #include <spot/twaalgos/hoa.hh>
 
 class Parser {
+public:
+    Parser();
+    ~Parser();
 
+    static spot::twa_graph_ptr parse(const std::string& filename);
 };
 
 

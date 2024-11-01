@@ -5,12 +5,11 @@ set(CMAKE_CXX_STANDARD 20)
 
 # Path to third-party packages
 set(THIRD_PARTY_PACKAGES ${CMAKE_SOURCE_DIR}/../packages)
-set(TOOLS tools)
+set(TOOLS tools/parser.cc tools/renderer.cc tools/tester.cc)
 
 # include dir
 include_directories(${THIRD_PARTY_PACKAGES}/spot-2.12.1)
 include_directories($ENV{HOME}/usr/include)
-include_directories(${TOOLS})
 
 # link dir
 link_directories(${THIRD_PARTY_PACKAGES}/spot-2.12.1/bin)
