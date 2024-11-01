@@ -68,6 +68,48 @@ void Renderer::render_dot(std::string filename, std::string input) {
     file.close();
 }
 
+bool Renderer::render_image(std::string filename) {
+    std::string new_filename = filename + ".png";
+    std::string o_arg = "-o" + new_filename;
+
+    std::vector<char*> args = {
+        const_cast<char*>("dot"),
+        const_cast<char*>("-Tpng"),
+        const_cast<char*>(filename.c_str()),
+        const_cast<char*>(o_arg.c_str()),
+        nullptr  // Ensure null termination
+    };
+
+    const int argc = args.size() - 1;  // Exclude null terminator
+    Agraph_t *g, *prev = NULL;
+    GVC_t *gvc = gvContext();
+
+    if (!gvc) {
+        return false;
+    }
+
+    gvParseArgs(gvc, argc, args.data());
+
+    while ((g = gvNextInputGraph(gvc))) {
+        if (prev) {
+            gvFreeLayout(gvc, prev);
+            agclose(prev);
+        }
+        gvLayoutJobs(gvc, g);
+        gvRenderJobs(gvc, g);
+        prev = g;
+    }
+
+    if (prev) {
+        gvFreeLayout(gvc, prev);
+        agclose(prev);
+    }
+
+    return !gvFreeContext(gvc);
+}
+
+
+
 void Renderer::render(spot::twa_graph_ptr& aut, std::string filename) {
     std::vector<std::string> initial_states = stringify_initial_states(aut);
     std::vector<std::string> acceptance = stringify_acceptance(aut);
@@ -115,4 +157,5 @@ void Renderer::render(spot::twa_graph_ptr& aut, std::string filename) {
     filename = "../DOT_files/" + filename;
 
     render_dot(filename, dot);
+    render_image(filename);
 }

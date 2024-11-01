@@ -11,6 +11,8 @@
 #include <spot/twa/bddprint.hh>
 #include <spot/twaalgos/sbacc.hh>
 
+#include <graphviz/gvc.h>
+
 class Renderer {
 private:
     /* Helper functions */
@@ -20,7 +22,7 @@ private:
     static std::vector<std::string> stringify_accepting_transitions(spot::twa_graph_ptr& aut);
 
     static void render_dot(std::string filename, std::string input);
-    static void render_image(std::string filename);
+    static bool render_image(std::string filename);
 public:
     Renderer();
     ~Renderer();

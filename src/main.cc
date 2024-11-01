@@ -11,5 +11,6 @@ int main() {
     // Renderer::render(aut, INPUT_FILE);
 
     Tester tester(TEST_DIR);
-    tester.run_render();
+    // tester.run_render();
+    tester.clear_render();
 }
