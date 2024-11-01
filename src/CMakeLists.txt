@@ -17,7 +17,7 @@ link_directories(${THIRD_PARTY_PACKAGES}/spot-2.12.1/bin)
 link_directories($ENV{HOME}/usr/lib)
 
 # Define executables
-add_executable(main main.cc)
+add_executable(main main.cc ${TOOLS})
 add_executable(test hello.cc)
 add_executable(example example_code/object_parser.cc)
 
