@@ -75,6 +75,7 @@ void Renderer::render(spot::twa_graph_ptr& aut, std::string filename) {
 
     std::string dot = "digraph G {\n";
 
+    dot += "{\n";
     for (unsigned int i = 0; i < aut->num_states(); i++) {
         std::string state = std::to_string(i);
         if (std::find(acceptance.begin(), acceptance.end(), state) != acceptance.end()) {
@@ -84,6 +85,10 @@ void Renderer::render(spot::twa_graph_ptr& aut, std::string filename) {
         }
     }
 
+    dot += "init [shape=point]\n";
+    
+    dot += "}\n";
+
     for (auto& state: transitions) {
         for (auto& transition: state.second) {
             dot += transition + "\n";
@@ -91,7 +96,6 @@ void Renderer::render(spot::twa_graph_ptr& aut, std::string filename) {
     }
 
     for (auto& state: initial_states) {
-        dot += "init [shape=point]\n";
         dot += "init -> " + state + "\n";
     }
 
@@ -99,7 +103,8 @@ void Renderer::render(spot::twa_graph_ptr& aut, std::string filename) {
 
     std::string::size_type pos = filename.find(".hoa") != std::string::npos ? filename.find(".hoa") : filename.find(".ehoa");
     if (pos != std::string::npos) {
-        filename.replace(pos, 4, ".dot");
+        filename = filename.substr(0, pos);
+        filename += ".dot";
     }
 
     pos = filename.find_last_of("/");
