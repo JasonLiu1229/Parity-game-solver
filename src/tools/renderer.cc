@@ -97,11 +97,17 @@ void Renderer::render(spot::twa_graph_ptr& aut, std::string filename) {
 
     dot += "}\n";
 
-    // replace .hoa or .ehoa with .dot
-    std::string::size_type pos = filename.find(".hoa");
+    std::string::size_type pos = filename.find(".hoa") != std::string::npos ? filename.find(".hoa") : filename.find(".ehoa");
     if (pos != std::string::npos) {
         filename.replace(pos, 4, ".dot");
     }
+
+    pos = filename.find_last_of("/");
+    if (pos != std::string::npos) {
+        filename = filename.substr(pos + 1);
+    }
+
+    filename = "../DOT_files/" + filename;
 
     render_dot(filename, dot);
 }
