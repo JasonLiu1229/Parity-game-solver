@@ -8,11 +8,14 @@
 #include <spot/twaalgos/hoa.hh>
 
 class Parser {
+    spot::twa_graph_ptr automaton;
 public:
     Parser();
     ~Parser();
 
     static spot::twa_graph_ptr parse(const std::string& filename);
+
+    spot::twa_graph_ptr getAutomaton() const;
 };
 
 

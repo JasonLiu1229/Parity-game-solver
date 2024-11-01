@@ -17,3 +17,7 @@ spot::twa_graph_ptr Parser::parse(const std::string& filename) {
     
     return pa->aut;
 }
+
+spot::twa_graph_ptr Parser::getAutomaton() const {
+    return this->automaton;
+}

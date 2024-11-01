@@ -40,3 +40,6 @@ packages/spot-*/
 
 # cmake
 */cmake-build-debug
+
+# dot files
+*.dot
