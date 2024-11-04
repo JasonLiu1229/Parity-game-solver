@@ -15,7 +15,7 @@
 
 typedef std::pair<std::string, std::string> stringpair_t;
 
-// Max support of 20 colors
+// Max support of 21 colors
 
 const stringpair_t map_start_values[] = {
     stringpair_t("red", "1"),
