@@ -61,8 +61,8 @@ std::vector<std::string> Renderer::stringify_accepting_transitions(spot::twa_gra
     return accepting_transitions;
 }
 
-std::map<std::string, std::vector<std::string>> Renderer::optimize_transitions(spot::twa_graph_ptr &aut) {
-    
+std::map<std::string, std::vector<std::string>> Renderer::optimize_transitions(const std::map<std::string, std::vector<std::string>>& transitions) {
+
 }
 
 
