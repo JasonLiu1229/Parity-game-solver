@@ -20,6 +20,8 @@ public:
     void run_render();
 
     void clear_render();
+
+    void test_solver();
 };
 
 

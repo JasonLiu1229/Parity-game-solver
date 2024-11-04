@@ -13,6 +13,8 @@ public:
     Parser();
     ~Parser();
 
+    // TODO: coloring for priority
+
     static spot::twa_graph_ptr parse(const std::string& filename);
 
     [[nodiscard]] spot::twa_graph_ptr getAutomaton() const;

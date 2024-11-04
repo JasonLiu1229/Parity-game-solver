@@ -121,11 +121,15 @@ void Renderer::render(spot::twa_graph_ptr& aut, std::string filename, bool rende
     std::vector<std::string> acceptance = stringify_acceptance(aut);
     std::map<std::string, std::vector<std::string>> transitions = stringify_transitions(aut);
 
+    // TODO: Add coloring for priority
+
     std::string dot = "digraph G {\n";
 
     dot += "{\n";
     for (unsigned int i = 0; i < aut->num_states(); i++) {
         std::string state = std::to_string(i);
+        auto states = aut->states;
+        auto current_state = states[i];
         if (std::find(acceptance.begin(), acceptance.end(), state) != acceptance.end()) {
             dot += state + " [shape=circle, peripheries=2]\n";
         } else {
