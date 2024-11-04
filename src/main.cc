@@ -10,7 +10,7 @@ int main() {
     auto aut = Parser::parse(INPUT_FILE);
     Renderer::render(aut, INPUT_FILE, true);
 
-    //Tester tester(TEST_DIR);
+    // Tester tester(TEST_DIR);
     // tester.run_render();
-    //tester.clear_render();
+    // tester.clear_render();
 }

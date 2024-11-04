@@ -61,6 +61,12 @@ std::vector<std::string> Renderer::stringify_accepting_transitions(spot::twa_gra
     return accepting_transitions;
 }
 
+std::map<std::string, std::vector<std::string>> Renderer::optimize_transitions(spot::twa_graph_ptr &aut) {
+    
+}
+
+
+
 void Renderer::render_dot(std::string filename, std::string input) {
     std::ofstream file;
     file.open(filename);

@@ -21,6 +21,8 @@ private:
     static std::vector<std::string> stringify_acceptance(spot::twa_graph_ptr& aut);
     static std::vector<std::string> stringify_accepting_transitions(spot::twa_graph_ptr& aut);
 
+    static std::map<std::string, std::vector<std::string>> optimize_transitions(spot::twa_graph_ptr& aut);
+
     static void render_dot(std::string filename, std::string input);
     static bool render_image(std::string filename);
 public:
