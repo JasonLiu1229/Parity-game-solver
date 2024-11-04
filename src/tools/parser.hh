@@ -7,19 +7,19 @@
 #include <spot/twa/twagraph.hh>
 #include <spot/twaalgos/hoa.hh>
 
-class Parser {
+class Parser
+{
     spot::twa_graph_ptr automaton;
+
 public:
     Parser();
     ~Parser();
 
     // TODO: coloring for priority
 
-    static spot::twa_graph_ptr parse(const std::string& filename);
+    static spot::twa_graph_ptr parse(const std::string &filename);
 
     [[nodiscard]] spot::twa_graph_ptr getAutomaton() const;
 };
-
-
 
 #endif // PARSER_HH

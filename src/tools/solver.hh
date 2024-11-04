@@ -1,12 +1,8 @@
 #ifndef SOLVER_HH
 #define SOLVER_HH
 
-
-
-class Solver {
-
+class Solver
+{
 };
 
-
-
-#endif //SOLVER_HH
+#endif // SOLVER_HH

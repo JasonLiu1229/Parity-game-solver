@@ -1,12 +1,8 @@
 #ifndef OPTMIZER_HH
 #define OPTMIZER_HH
 
-
-
-class Optmizer {
-
+class Optmizer
+{
 };
 
-
-
-#endif //OPTMIZER_HH
+#endif // OPTMIZER_HH

@@ -43,27 +43,27 @@ const stringpair_t map_start_values[] = {
 
 const int map_start_values_size = sizeof(map_start_values) / sizeof(map_start_values[0]);
 
-const std::map<std::string, std::string> color_map (map_start_values, map_start_values + map_start_values_size);
+const std::map<std::string, std::string> color_map(map_start_values, map_start_values + map_start_values_size);
 
-class Renderer {
+class Renderer
+{
 private:
     /* Helper functions */
-    static std::map<std::string, std::vector<std::string>> stringify_transitions(spot::twa_graph_ptr& aut);
-    static std::vector<std::string> stringify_initial_states(spot::twa_graph_ptr& aut);
-    static std::vector<std::string> stringify_acceptance(spot::twa_graph_ptr& aut);
-    static std::vector<std::string> stringify_accepting_transitions(spot::twa_graph_ptr& aut);
+    static std::map<std::string, std::vector<std::string>> stringify_transitions(spot::twa_graph_ptr &aut);
+    static std::vector<std::string> stringify_initial_states(spot::twa_graph_ptr &aut);
+    static std::vector<std::string> stringify_acceptance(spot::twa_graph_ptr &aut);
+    static std::vector<std::string> stringify_accepting_transitions(spot::twa_graph_ptr &aut);
 
-    static std::map<std::string, std::vector<std::string>> optimize_transitions(const std::map<std::string, std::vector<std::string>>& transitions);
+    static std::map<std::string, std::vector<std::string>> optimize_transitions(const std::map<std::string, std::vector<std::string>> &transitions);
 
     static void render_dot(std::string filename, std::string input);
     static bool render_image(std::string filename);
+
 public:
     Renderer();
     ~Renderer();
 
-    static void render(spot::twa_graph_ptr& aut, std::string filename = "some_random_name.hoa", bool render = false);
+    static void render(spot::twa_graph_ptr &aut, std::string filename = "some_random_name.hoa", bool render = false);
 };
 
-
-
-#endif //RENDERER_HH
+#endif // RENDERER_HH
