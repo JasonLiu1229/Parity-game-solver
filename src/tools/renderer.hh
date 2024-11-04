@@ -38,6 +38,7 @@ const stringpair_t map_start_values[] = {
     stringpair_t("lime", "18"),
     stringpair_t("olive", "19"),
     stringpair_t("navy", "20"),
+    stringpair_t("black", "21"),
 };
 
 const int map_start_values_size = sizeof(map_start_values) / sizeof(map_start_values[0]);
