@@ -15,7 +15,7 @@ public:
 
     static spot::twa_graph_ptr parse(const std::string& filename);
 
-    spot::twa_graph_ptr getAutomaton() const;
+    [[nodiscard]] spot::twa_graph_ptr getAutomaton() const;
 };
 
 
