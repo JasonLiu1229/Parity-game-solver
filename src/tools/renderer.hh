@@ -27,7 +27,7 @@ public:
     Renderer();
     ~Renderer();
 
-    static void render(spot::twa_graph_ptr& aut, std::string filename = "some_random_name.hoa");
+    static void render(spot::twa_graph_ptr& aut, std::string filename = "some_random_name.hoa", bool render = false);
 };
 
 

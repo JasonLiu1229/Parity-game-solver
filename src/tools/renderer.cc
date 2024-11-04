@@ -110,7 +110,7 @@ bool Renderer::render_image(std::string filename) {
 
 
 
-void Renderer::render(spot::twa_graph_ptr& aut, std::string filename) {
+void Renderer::render(spot::twa_graph_ptr& aut, std::string filename, bool render) {
     std::vector<std::string> initial_states = stringify_initial_states(aut);
     std::vector<std::string> acceptance = stringify_acceptance(aut);
     std::map<std::string, std::vector<std::string>> transitions = stringify_transitions(aut);
@@ -157,5 +157,8 @@ void Renderer::render(spot::twa_graph_ptr& aut, std::string filename) {
     filename = "../DOT_files/" + filename;
 
     render_dot(filename, dot);
-    render_image(filename);
+
+    if (render == true) {
+        render_image(filename);
+    }
 }
