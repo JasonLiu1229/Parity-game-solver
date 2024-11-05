@@ -43,3 +43,7 @@ packages/spot-*/
 
 # dot files
 *.dot
+
+# build and cmake build files
+build/
+*cmake-build-debug/
