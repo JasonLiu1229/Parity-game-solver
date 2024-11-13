@@ -17,7 +17,15 @@ std::map<std::string, std::vector<std::string>> Renderer::stringify_transitions(
             std::string src = std::to_string(i);
             std::string dst = std::to_string(t.dst);
             std::string cond = spot::bdd_format_formula(dict, t.cond);
-            std::string str = src + " -> " + dst + " [label=\"" + cond + "\"]";
+            std::ostringstream oss;
+            std::string t_acc_set;
+            if (aut->prop_state_acc() != true) {
+                oss << t.acc;
+                t_acc_set = oss.str();
+            } else {
+                t_acc_set = "";
+            }
+            std::string str = state_name_map[src] + " -> " + state_name_map[dst] + " [label=\"" + cond + t_acc_set + "\"]";
             aut_str[src].push_back(str);
         }
     }
@@ -63,7 +71,15 @@ std::vector<std::string> Renderer::stringify_accepting_transitions(spot::twa_gra
                 std::string src = std::to_string(i);
                 std::string dst = std::to_string(t.dst);
                 std::string cond = spot::bdd_format_formula(aut->get_dict(), t.cond);
-                std::string str = src + " -> " + dst + " [label=\"" + cond + "\"]";
+                std::ostringstream oss;
+                std::string t_acc_set;
+                if (!aut->prop_state_acc()) {
+                    oss << t.acc;
+                    t_acc_set = oss.str();
+                } else {
+                    t_acc_set = "";
+                }
+                std::string str = state_name_map[src] + " -> " + state_name_map[dst] + " [label=\"" + cond + t_acc_set + "\"]";
                 accepting_transitions.push_back(str);
             }
         }
@@ -131,11 +147,11 @@ bool Renderer::render_image(std::string filename)
 
 void Renderer::render(spot::twa_graph_ptr &aut, std::string filename, bool render)
 {
+    map_states(aut);
+
     std::vector<std::string> initial_states = stringify_initial_states(aut);
     std::vector<std::string> acceptance = stringify_acceptance(aut);
     std::map<std::string, std::vector<std::string>> transitions = stringify_transitions(aut);
-
-    // TODO: Add coloring for priority
 
     std::string dot = "digraph G {\n";
 
@@ -143,16 +159,8 @@ void Renderer::render(spot::twa_graph_ptr &aut, std::string filename, bool rende
     for (unsigned int i = 0; i < aut->num_states(); i++)
     {
         std::string state = std::to_string(i);
-        auto states = aut->states;
-        auto current_state = states[i];
-        if (std::find(acceptance.begin(), acceptance.end(), state) != acceptance.end())
-        {
-            dot += state + " [shape=circle, peripheries=2]\n";
-        }
-        else
-        {
-            dot += state + " [shape=circle]\n";
-        }
+
+        dot += state_name_map[state] + "[shape=circle]\n";
     }
 
     dot += "init [shape=point]\n";
@@ -169,7 +177,7 @@ void Renderer::render(spot::twa_graph_ptr &aut, std::string filename, bool rende
 
     for (auto &state : initial_states)
     {
-        dot += "init -> " + state + "\n";
+        dot += "init -> " + state_name_map[state] + "\n";
     }
 
     dot += "}\n";
@@ -194,5 +202,27 @@ void Renderer::render(spot::twa_graph_ptr &aut, std::string filename, bool rende
     if (render == true)
     {
         render_image(filename);
+    }
+}
+
+void Renderer::map_states(spot::twa_graph_ptr &aut) {
+    for (unsigned int i = 0; i < aut->num_states(); i++) {
+        std::string state = std::to_string(i);
+        std::ostringstream oss;
+        std::string acc_str;
+        if (aut->prop_state_acc()) {
+            auto acc_sets = aut->state_acc_sets(i);
+            oss << acc_sets;
+            acc_str = oss.str();
+            if (acc_str != "{}") {
+                state_name_map[state] = "\"" + state + ", " + acc_str + "\"";
+            }
+            else {
+                state_name_map[state] = "\"" + state + "\"";
+            }
+        }
+        else {
+            state_name_map[state] = state;
+        }
     }
 }

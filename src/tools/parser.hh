@@ -6,6 +6,7 @@
 #include <spot/twaalgos/postproc.hh>
 #include <spot/twa/twagraph.hh>
 #include <spot/twaalgos/hoa.hh>
+#include <spot/twaalgos/sbacc.hh>
 
 class Parser
 {
@@ -15,11 +16,11 @@ public:
     Parser();
     ~Parser();
 
-    // TODO: coloring for priority
-
-    static spot::twa_graph_ptr parse(const std::string &filename);
+    spot::twa_graph_ptr parse(const std::string &filename);
 
     [[nodiscard]] spot::twa_graph_ptr getAutomaton() const;
+
+    spot::twa_graph_ptr getSbaccAutomaton();
 };
 
 #endif // PARSER_HH

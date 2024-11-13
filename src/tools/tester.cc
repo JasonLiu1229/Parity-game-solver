@@ -33,9 +33,11 @@ void Tester::run_render()
 
             std::cout << "Parsing " << inputPath << std::endl;
 
+            Parser parser;
+
             try
             {
-                Parser::parse(inputPath);
+                parser.parse(inputPath);
             }
             catch (const std::exception &e)
             {
@@ -44,10 +46,12 @@ void Tester::run_render()
                 continue;
             }
 
-            auto automaton = Parser::parse(inputPath);
+            auto automaton = parser.getAutomaton();
 
             std::cout << "Rendering " << inputPath << std::endl;
-            Renderer::render(automaton, inputPath);
+            Renderer renderer;
+
+            renderer.render(automaton, inputPath);
 
             std::cout << std::endl;
         }

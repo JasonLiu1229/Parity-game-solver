@@ -2,14 +2,17 @@
 
 #include "tools/tester.hh"
 
-#define INPUT_FILE "../HOA_files/detector.tlsf.ehoa"
+#define INPUT_FILE "../HOA_files/lilydemo01.tlsf.ehoa"
 #define TEST_DIR "../HOA_files"
 
 int main()
 {
     Parser parser;
-    auto aut = Parser::parse(INPUT_FILE);
-    Renderer::render(aut, INPUT_FILE, true);
+    auto aut = parser.parse(INPUT_FILE);
+    //aut = parser.getSbaccAutomaton();
+
+    Renderer renderer;
+    renderer.render(aut, INPUT_FILE, true);
 
     // Tester tester(TEST_DIR);
     // tester.run_render();
