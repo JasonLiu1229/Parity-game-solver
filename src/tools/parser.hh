@@ -2,6 +2,11 @@
 #define PARSER_HH
 
 #include <iostream>
+#include <string>
+#include <vector>
+#include <fstream>
+#include <sstream>
+
 #include <spot/parseaut/public.hh>
 #include <spot/twaalgos/postproc.hh>
 #include <spot/twa/twagraph.hh>
@@ -11,6 +16,7 @@
 class Parser
 {
     spot::twa_graph_ptr automaton;
+    std::vector<int> controllable_aps;
 
 public:
     Parser();
@@ -21,6 +27,8 @@ public:
     [[nodiscard]] spot::twa_graph_ptr getAutomaton() const;
 
     spot::twa_graph_ptr getSbaccAutomaton();
+
+    [[nodiscard]] std::vector<int> getControllableAPs() const;
 };
 
 #endif // PARSER_HH
