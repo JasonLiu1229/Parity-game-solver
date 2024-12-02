@@ -87,3 +87,17 @@ void Tester::clear_render()
         }
     }
 }
+
+void Tester::test_single_solver(){
+    // start of timer
+    auto start = std::chrono::high_resolution_clock::now();
+
+    // some functions
+
+    // end of timer
+    auto end = std::chrono::high_resolution_clock::now();
+
+    // calculate duration
+    std::chrono::duration<double, std::milli> duration = end - start;
+    std::cout << "Duration: " << duration.count() << "ms" << std::endl;
+}

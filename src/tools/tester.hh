@@ -22,7 +22,9 @@ public:
 
     void clear_render();
 
-    void test_solver();
+    void test_single_solver();
+
+    void test_solver_directory();
 };
 
 #endif // TESTER_HH

@@ -9,6 +9,7 @@
 #include <iostream>
 #include <vector>
 #include <unordered_map>
+#include <unordered_set>
 #include <queue>
 #include <set>
 
@@ -30,9 +31,15 @@ class Solver
 
         void getControllableAPs();
 
+        void solve_transition_based();
+        void solve_state_based();
 
+        void build_transition_based_game();
+        void build_state_based_game();
 
-        
+        std::unordered_set<int> attractor(bool player, const std::unordered_set<int> &target);
+
+        std::pair<std::unordered_set<int>, std::unordered_set<int>> zielonka(const std::unordered_set<int>& states);
 };
 
 #endif // SOLVER_HH
