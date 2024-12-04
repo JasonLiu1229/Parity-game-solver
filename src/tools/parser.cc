@@ -73,3 +73,4 @@ std::vector<int> Parser::getControllableAPs() const
 {
     return this->controllable_aps;
 }
+

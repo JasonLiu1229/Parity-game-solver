@@ -5,6 +5,7 @@
 #include <spot/twaalgos/hoa.hh>
 #include <spot/twa/bddprint.hh>
 #include <spot/twa/twagraph.hh>
+#include <spot/twaalgos/translate.hh>
 
 #include <iostream>
 #include <vector>
@@ -25,17 +26,19 @@ class Solver
         ~Solver() = default;
 
         void solve();
+
+        spot::twa_graph_ptr get_automaton() const { return this->automaton; }
     
     private:
-        int getPriority(int state);
+        int get_priority(int state);
 
-        void getControllableAPs();
+        int get_priority_transition(const spot::twa_graph::edge_storage_t& transition);
 
-        void solve_transition_based();
-        void solve_state_based();
+        void reconstruct_transition_based_to_state_based();
 
-        void build_transition_based_game();
         void build_state_based_game();
+
+        void solve_state_based();
 
         std::unordered_set<int> attractor(bool player, const std::unordered_set<int> &target);
 

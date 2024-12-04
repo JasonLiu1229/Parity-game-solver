@@ -5,7 +5,13 @@ set(CMAKE_CXX_STANDARD 20)
 
 # Path to third-party packages
 set(THIRD_PARTY_PACKAGES ${CMAKE_SOURCE_DIR}/../packages)
-set(TOOLS tools/parser.cc tools/renderer.cc tools/tester.cc)
+set(TOOLS
+        tools/parser.cc
+        tools/renderer.cc
+        tools/tester.cc
+        tools/parity_game.cc
+        tools/solver.cc
+)
 
 # include dir
 include_directories(${THIRD_PARTY_PACKAGES}/spot-2.12.1)
@@ -22,5 +28,5 @@ add_executable(example example_code/object_parser.cc)
 
 # Link Spot library to the targets
 target_link_libraries(main PRIVATE spot $ENV{HOME}/usr/lib/libspot.so $ENV{HOME}/usr/lib/libbddx.so PUBLIC gvc cgraph)
-target_link_libraries(test PRIVATE spot)
+target_link_libraries(test PRIVATE spot )
 target_link_libraries(example PRIVATE spot)
