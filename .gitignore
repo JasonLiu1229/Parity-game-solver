@@ -37,6 +37,7 @@
 
 # Spot packages
 packages/spot-*/
+packages/buddy-*/
 
 # cmake
 */cmake-build-debug
