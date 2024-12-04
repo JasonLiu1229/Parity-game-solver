@@ -9,7 +9,6 @@ set(TOOLS
         tools/parser.cc
         tools/renderer.cc
         tools/tester.cc
-        tools/parity_game.cc
         tools/solver.cc
 )
 

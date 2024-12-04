@@ -14,10 +14,12 @@ int main()
     Solver solver(aut);
     solver.solve();
 
-    //aut = solver.get_automaton();
+    aut = solver.get_automaton();
 
-    Renderer renderer;
-    renderer.render(aut, INPUT_FILE, true);
+    std::cout << aut->prop_state_acc() << std::endl;
+
+    // Renderer renderer;
+    // renderer.render(aut, INPUT_FILE, true);
 
     //aut = parser.getSbaccAutomaton();
 
