@@ -40,7 +40,7 @@ class Solver
 
         void solve_state_based();
 
-        std::unordered_set<int> attractor(bool player, const std::unordered_set<int> &target);
+        std::unordered_set<int> attractor(const std::unordered_set<int> &target); // assume we are always player 0
 
         std::pair<std::unordered_set<int>, std::unordered_set<int>> zielonka(const std::unordered_set<int>& states);
 };

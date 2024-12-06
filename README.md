@@ -3,17 +3,12 @@
 ## How to run
 
 ```sh
-    export LD_LIBRARY_PATH=$HOME/usr/lib:~/home/Documents/School/SV-Project/packages/spot-2.12.1/
-```
+cd src
 
-```sh
-    g++ -std=c++17 -I$HOME/usr/include main.cc -L$HOME/usr/lib -lspot -o main
-```
-
-```sh
-    ./main
+./main.sh
 ```
 
 ## Packages
 
 Spot parser 
+BuDDy BDD objects
