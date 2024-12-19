@@ -3,7 +3,7 @@
 #include "tools/tester.hh"
 #include "tools/solver.hh"
 
-#define INPUT_FILE "../HOA_files/UnderapproxDemo.tlsf.ehoa"
+#define INPUT_FILE "../HOA_files/ActionConverter.tlsf.ehoa"
 #define TEST_DIR "../HOA_files"
 
 int main()
@@ -11,7 +11,7 @@ int main()
     Parser parser;
     auto aut = parser.parse(INPUT_FILE);
 
-    Solver solver(aut);
+    Solver solver(aut, parser.getControllableAPs());
     solver.solve();
 
     aut = solver.get_automaton();

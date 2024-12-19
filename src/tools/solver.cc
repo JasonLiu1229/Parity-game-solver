@@ -61,7 +61,49 @@ void Solver::reconstruct_transition_based_to_state_based()
         }
     }
 
+    // copy aps
+    for (auto &ap : this->automaton->ap())
+    {
+        new_automaton->register_ap(ap);
+    }
+
+    // copy initial states
+    new_automaton->set_init_state(this->automaton->get_init_state_number());
+
     this->automaton = new_automaton;
+}
+
+int Solver::check_player(int state)
+{
+    std::vector<std::string> converted_ap;
+    const spot::bdd_dict_ptr &dict = this->automaton->get_dict();
+
+    std::vector<bdd> con_aps;
+
+    for (auto &ap : this->controllable_aps)
+    {
+        con_aps.push_back(bdd_ithvar(ap));
+    }
+
+    for (auto &t : this->automaton->out(state)) {
+        if (t.cond == bddtrue) {
+            return 1;
+        }
+        else {
+            std::string cond = spot::bdd_format_formula(dict, t.cond);
+            for (auto &ap : con_aps) {
+                std::string con_ap_str = spot::bdd_format_formula(dict, ap);
+                // if con ap is in the condition
+                if (cond.find(con_ap_str) != std::string::npos)
+                {
+                    return 0;
+                }
+
+            }
+        
+        }
+    }
+    return 1;
 }
 
 void Solver::solve()
@@ -72,4 +114,10 @@ void Solver::solve()
         std::cout << "Transition-based automaton reconstructed to state-based automaton" << std::endl;
     }
     // this->solve_state_based();
+    std::cout << this->check_player(1) << std::endl;
+}
+
+std::unordered_set<int> Solver::attractor(const std::unordered_set<int> &target)
+{
+    
 }

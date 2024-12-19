@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <map>
 #include <fstream>
 #include <sstream>
 
@@ -29,6 +30,7 @@ public:
     spot::twa_graph_ptr getSbaccAutomaton();
 
     [[nodiscard]] std::vector<int> getControllableAPs() const;
+
 };
 
 #endif // PARSER_HH

@@ -43,13 +43,14 @@ spot::twa_graph_ptr Parser::parse(const std::string &filename)
                     controllableAPs.push_back(value);
                 }
             }
+            break;
         }
     }
 
     file.close();
+    this->controllable_aps = controllableAPs;
 
     this->automaton = pa->aut;
-    this->controllable_aps = controllableAPs;
 
     return pa->aut;
 }

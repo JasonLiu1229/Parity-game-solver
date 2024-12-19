@@ -25,6 +25,8 @@ class Solver
         explicit Solver() = default;
         ~Solver() = default;
 
+        int check_player(int state);
+
         void solve();
 
         spot::twa_graph_ptr get_automaton() const { return this->automaton; }
@@ -39,7 +41,7 @@ class Solver
         void build_state_based_game();
 
         void solve_state_based();
-
+        
         std::unordered_set<int> attractor(const std::unordered_set<int> &target); // assume we are always player 0
 
         std::pair<std::unordered_set<int>, std::unordered_set<int>> zielonka(const std::unordered_set<int>& states);
