@@ -30,7 +30,6 @@ public:
     spot::twa_graph_ptr getSbaccAutomaton();
 
     [[nodiscard]] std::vector<int> getControllableAPs() const;
-
 };
 
 #endif // PARSER_HH

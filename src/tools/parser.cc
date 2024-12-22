@@ -25,21 +25,26 @@ spot::twa_graph_ptr Parser::parse(const std::string &filename)
     std::vector<int> controllableAPs;
     std::string line;
 
-    if (!file.is_open()) {
+    if (!file.is_open())
+    {
         std::cerr << "Error: could not open the file" << std::endl;
         exit(1);
     }
 
-    while (std::getline(file, line)) {
-        if (line.find("controllable-AP") == 0) {
+    while (std::getline(file, line))
+    {
+        if (line.find("controllable-AP") == 0)
+        {
             size_t pos = line.find(":");
-            if (pos != std::string::npos) {
+            if (pos != std::string::npos)
+            {
                 std::string values = line.substr(pos + 1);
                 std::istringstream iss(values);
                 int value;
-                
+
                 // Extract each entry and store it
-                while (iss >> value) {
+                while (iss >> value)
+                {
                     controllableAPs.push_back(value);
                 }
             }
@@ -60,7 +65,6 @@ spot::twa_graph_ptr Parser::getAutomaton() const
     return this->automaton;
 }
 
-
 spot::twa_graph_ptr Parser::getSbaccAutomaton()
 {
     spot::twa_graph_ptr aut = this->automaton;
@@ -74,4 +78,3 @@ std::vector<int> Parser::getControllableAPs() const
 {
     return this->controllable_aps;
 }
-

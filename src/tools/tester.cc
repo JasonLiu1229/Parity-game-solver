@@ -88,7 +88,8 @@ void Tester::clear_render()
     }
 }
 
-void Tester::test_single_solver(){
+void Tester::test_single_solver()
+{
     // start of timer
     auto start = std::chrono::high_resolution_clock::now();
 

@@ -19,10 +19,13 @@ std::map<std::string, std::vector<std::string>> Renderer::stringify_transitions(
             std::string cond = spot::bdd_format_formula(dict, t.cond);
             std::ostringstream oss;
             std::string t_acc_set;
-            if (aut->prop_state_acc() != true) {
+            if (aut->prop_state_acc() != true)
+            {
                 oss << t.acc;
                 t_acc_set = oss.str();
-            } else {
+            }
+            else
+            {
                 t_acc_set = "";
             }
             std::string str = state_name_map[src] + " -> " + state_name_map[dst] + " [label=\"" + cond + t_acc_set + "\"]";
@@ -73,10 +76,13 @@ std::vector<std::string> Renderer::stringify_accepting_transitions(spot::twa_gra
                 std::string cond = spot::bdd_format_formula(aut->get_dict(), t.cond);
                 std::ostringstream oss;
                 std::string t_acc_set;
-                if (!aut->prop_state_acc()) {
+                if (!aut->prop_state_acc())
+                {
                     oss << t.acc;
                     t_acc_set = oss.str();
-                } else {
+                }
+                else
+                {
                     t_acc_set = "";
                 }
                 std::string str = state_name_map[src] + " -> " + state_name_map[dst] + " [label=\"" + cond + t_acc_set + "\"]";
@@ -205,23 +211,29 @@ void Renderer::render(spot::twa_graph_ptr &aut, std::string filename, bool rende
     }
 }
 
-void Renderer::map_states(spot::twa_graph_ptr &aut) {
-    for (unsigned int i = 0; i < aut->num_states(); i++) {
+void Renderer::map_states(spot::twa_graph_ptr &aut)
+{
+    for (unsigned int i = 0; i < aut->num_states(); i++)
+    {
         std::string state = std::to_string(i);
         std::ostringstream oss;
         std::string acc_str;
-        if (aut->prop_state_acc()) {
+        if (aut->prop_state_acc())
+        {
             auto acc_sets = aut->state_acc_sets(i);
             oss << acc_sets;
             acc_str = oss.str();
-            if (acc_str != "{}") {
+            if (acc_str != "{}")
+            {
                 state_name_map[state] = "\"" + state + ", " + acc_str + "\"";
             }
-            else {
+            else
+            {
                 state_name_map[state] = "\"" + state + "\"";
             }
         }
-        else {
+        else
+        {
             state_name_map[state] = state;
         }
     }
