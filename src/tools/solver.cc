@@ -207,3 +207,13 @@ std::set<int> Solver::attractor(const std::set<int> &target)
 
     return result;
 }
+
+void Solver::zielonka_recursive(std::unordered_set<int> &winning, std::unordered_set<int> &losing, int player)
+{
+    if (this->automaton->num_states() == 0)
+    {
+        return;
+    }
+
+
+}
