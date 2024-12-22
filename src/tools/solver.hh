@@ -47,10 +47,6 @@ private:
     void zielonka_recursive(std::unordered_set<int> &winning, std::unordered_set<int> &losing, int player);
 
     std::pair<std::unordered_set<int>, std::unordered_set<int>> zielonka(int player);
-
-    std::vector<int> compute_player_states(const std::vector<int> &states, int player);
-
-    std::set<int> compute_predecessors(int state);
 };
 
 #endif // SOLVER_HH
