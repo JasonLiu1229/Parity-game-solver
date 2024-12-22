@@ -18,6 +18,8 @@ class Solver
 {
     spot::twa_graph_ptr automaton;
     std::vector<int> controllable_aps;
+    bool isMax = true;
+    bool isEven = true;
 
 public:
     explicit Solver(const spot::twa_graph_ptr &aut) : automaton(aut) {}
