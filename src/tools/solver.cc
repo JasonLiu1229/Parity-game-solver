@@ -1,6 +1,6 @@
 #include "solver.hh"
 
-int Solver::get_priority_transition(const spot::twa_graph::edge_storage_t& transition)
+int Solver::get_priority_transition(const spot::twa_graph::edge_storage_t &transition)
 {
     int priority = 0;
 
@@ -51,7 +51,7 @@ void Solver::reconstruct_transition_based_to_state_based()
             int dst = t.dst;
             std::string cond = spot::bdd_format_formula(original_dict, t.cond);
 
-            //int priority = this->get_priority_transition(t);
+            // int priority = this->get_priority_transition(t);
 
             int intermediate = new_automaton->new_state();
 
@@ -85,22 +85,24 @@ int Solver::check_player(int state)
         con_aps.push_back(bdd_ithvar(ap));
     }
 
-    for (auto &t : this->automaton->out(state)) {
-        if (t.cond == bddtrue) {
+    for (auto &t : this->automaton->out(state))
+    {
+        if (t.cond == bddtrue)
+        {
             return 1;
         }
-        else {
+        else
+        {
             std::string cond = spot::bdd_format_formula(dict, t.cond);
-            for (auto &ap : con_aps) {
+            for (auto &ap : con_aps)
+            {
                 std::string con_ap_str = spot::bdd_format_formula(dict, ap);
                 // if con ap is in the condition
                 if (cond.find(con_ap_str) != std::string::npos)
                 {
                     return 0;
                 }
-
             }
-        
         }
     }
     return 1;
@@ -153,48 +155,55 @@ std::set<int> Solver::attractor(const std::set<int> &target)
 {
     std::set<int> result = target; // Initialize attractor set with target set
 
-    
     // ========================================
 
     std::queue<int> queue;
 
-    for (int state : target) {
-        queue.push(state); 
+    for (int state : target)
+    {
+        queue.push(state);
     }
 
-    while (!queue.empty()) {
+    while (!queue.empty())
+    {
         int current_state = queue.front();
         queue.pop();
 
         std::set<int> predecessors = this->compute_predecessors(current_state);
         bool added = false;
 
-        for (int predecessor : predecessors) {
-            if (this->check_player(predecessor) == 0) {
+        for (int predecessor : predecessors)
+        {
+            if (this->check_player(predecessor) == 0)
+            {
                 added = result.insert(predecessor).second;
-            } else {
+            }
+            else
+            {
                 bool all_successors_in_attractor = true;
-                for (auto &t : this->automaton->out(predecessor)) {
-                    if (result.find(t.dst) == result.end()) {
+                for (auto &t : this->automaton->out(predecessor))
+                {
+                    if (result.find(t.dst) == result.end())
+                    {
                         all_successors_in_attractor = false;
                         break;
                     }
                 }
-                if (all_successors_in_attractor) {
+                if (all_successors_in_attractor)
+                {
                     added = result.insert(predecessor).second;
                     queue.push(predecessor);
                 }
             }
 
-            if (added) {
+            if (added)
+            {
                 queue.push(predecessor);
             }
         }
     }
 
-
     // ========================================
 
     return result;
 }
-
