@@ -19,6 +19,9 @@ class Parser
     spot::twa_graph_ptr automaton;
     std::vector<int> controllable_aps;
 
+    bool is_max = true;
+    bool is_even = true;
+
 public:
     Parser();
     ~Parser();
@@ -30,6 +33,10 @@ public:
     spot::twa_graph_ptr getSbaccAutomaton();
 
     [[nodiscard]] std::vector<int> getControllableAPs() const;
+
+    [[nodiscard]] bool isMax() const { return this->is_max; }
+
+    [[nodiscard]] bool isEven() const { return this->is_even; }
 };
 
 #endif // PARSER_HH

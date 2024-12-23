@@ -48,7 +48,26 @@ spot::twa_graph_ptr Parser::parse(const std::string &filename)
                     controllableAPs.push_back(value);
                 }
             }
-            break;
+        } else if (line.find("acc-name") == 0){
+            size_t pos = line.find(":");
+            if (pos != std::string::npos)
+            {
+                if (line.find("even") != std::string::npos)
+                {
+                    this->is_even = true;
+                } else if (line.find("odd") != std::string::npos)
+                {
+                    this->is_even = false;
+                } 
+
+                if (line.find("max") != std::string::npos)
+                {
+                    this->is_max = true;
+                } else if (line.find("min") != std::string::npos)
+                {
+                    this->is_max = false;
+                }
+            }
         }
     }
 

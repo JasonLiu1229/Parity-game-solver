@@ -27,237 +27,76 @@ int Game::extract_priority(std::string acc_set)
     return std::stoi(priority);
 }
 
-void Game::collect_sub_roots(bdd root, int firstVar, std::set<bdd> &collector)
+BTTree* recursive_btree(std::string condition){
+    BTTree *tree = new BTTree();
+
+    if(condition.find("&") != std::string::npos){
+        std::string left = condition.substr(0, condition.find("&"));
+        std::string right = condition.substr(condition.find("&") + 1);
+        tree->root->left = recursive_btree(left)->root;
+        tree->root->right = recursive_btree(right)->root;
+        tree->root->type = NodeType::AND;
+    } else if(condition.find("|") != std::string::npos){
+        std::string left = condition.substr(0, condition.find("|"));
+        std::string right = condition.substr(condition.find("|") + 1);
+        tree->root->left = recursive_btree(left)->root;
+        tree->root->right = recursive_btree(right)->root;
+        tree->root->type = NodeType::OR;
+    } else if(condition.find("!") != std::string::npos){
+        std::string right = condition.substr(condition.find("!") + 1);
+        tree->root->right = recursive_btree(right)->root;
+        tree->root->type = NodeType::NOT;
+    } else {
+        tree->root->type = NodeType::AP;
+    }
+
+}
+
+BTTree *Game::create_transition_based_tree(bdd condition)
 {
-    std::stack<bdd> stack;
-    std::unordered_set<int> visited; // Track visited nodes to avoid cycles
+    BTTree *tree = new BTTree();
+    const spot::bdd_dict_ptr &dict = this->automaton->get_dict();
+    std::string condition_str = spot::bdd_format_formula(dict, condition);
 
-    stack.push(root);
-    visited.insert(root.id());
+    std::cout << "Condition: " << condition_str << std::endl;
 
-    while (!stack.empty())
+    // Split the condition string based on the operator
+    std::vector<std::string> split_condition;
+    std::string temp = "";
+    for (char &c : condition_str)
     {
-        bdd current = stack.top();
-        stack.pop();
-
-        if (current == bdd_false() || current == bdd_true())
+        if (c == '&' || c == '|')
         {
-            collector.insert(current);
-            continue;
-        }
-
-        int var = bdd_var(current);
-
-        if (var < firstVar)
-        {
-            // Continue exploring the branches
-            bdd high = bdd_high(current);
-            bdd low = bdd_low(current);
-
-            if (visited.insert(high.id()).second)
-            {
-                stack.push(high);
-            }
-            if (visited.insert(low.id()).second)
-            {
-                stack.push(low);
-            }
+            split_condition.push_back(temp);
+            temp = "";
         }
         else
         {
-            // Stop and add current node as a subroot
-            collector.insert(current);
+            temp += c;
         }
     }
-}
-
-void Game::extract_vars(bdd root, std::vector<int> &vars)
-{
-    if (root == bddfalse || root == bddtrue)
-    {
-        return;
-    }
-
-    int var = bdd_var(root);
-    vars.push_back(var);
-
-    extract_vars(bdd_high(root), vars);
-    extract_vars(bdd_low(root), vars);
-}
-
-bdd Game::encode_state(int state, bdd statevars)
-{
-    std::vector<int> vars;
-    this->extract_vars(statevars, vars);
-
-    bdd cube = bddtrue;
-
-    uint32_t state_binary = state;
-
-    for (auto it = vars.rbegin(); it != vars.rend(); ++it)
-    {
-        int var = *it;
-
-        if (state_binary & 1)
-        {
-            cube &= bdd_ithvar(var);
-        }
-        else
-        {
-            cube &= bdd_nithvar(var);
-        }
-
-        state_binary >>= 1;
-    }
-
-    return cube;
-}
-
-bdd Game::encode_priority(int priority, int priobits)
-{
-    bdd cube = bddtrue;
-
-    // binary version of priority
-    uint32_t prio_binary = priority;
-    for (int i = 0; i < priobits; ++i)
-    {
-        if (prio_binary & 1)
-        {
-            cube &= bdd_ithvar(i);
-        }
-        else
-        {
-            cube &= bdd_nithvar(i);
-        }
-        prio_binary >>= 1;
-    }
-    return cube;
-}
-
-bdd Game::encode_priostate(int state, int priority, bdd statevars, bdd priovars)
-{
-    std::vector<int> state_var_list;
-    std::vector<int> prio_var_list;
-
-    // Extract variables from priovars (priority bits)
-    extract_vars(priovars, prio_var_list);
-
-    // Extract variables from statevars (state bits)
-    extract_vars(statevars, state_var_list);
-
-    bdd cube = bdd_true();
-
-    uint32_t state_binary = state;
-    uint32_t prio_binary = priority;
-
-    for (auto it = state_var_list.rbegin(); it != state_var_list.rend(); ++it)
-    {
-        int var = *it;
-        if (state_binary & 1)
-        {
-            cube &= bdd_ithvar(var); // Set to 1
-        }
-        else
-        {
-            cube &= bdd_nithvar(var); // Set to 0
-        }
-        state_binary >>= 1;
-    }
-
-    for (auto it = prio_var_list.rbegin(); it != prio_var_list.rend(); ++it)
-    {
-        int var = *it;
-        if (prio_binary & 1)
-        {
-            cube &= bdd_ithvar(var); // Set to 1
-        }
-        else
-        {
-            cube &= bdd_nithvar(var); // Set to 0
-        }
-        prio_binary >>= 1;
-    }
-
-    return cube;
-}
-
-bdd Game::collect_targets(bdd trans, std::set<uint64_t> &res, bdd statevars, bdd priovars)
-{
-    if (this->is_leaf(trans))
-    {
-        uint64_t leaf = (trans == bdd_true()) ? 1 : 0; 
-        res.insert(leaf);
-
-        // Decode priority and state
-        uint32_t priority = (uint32_t)(leaf >> 32);       // Higher 32 bits
-        uint32_t state = (uint32_t)(leaf & 0xFFFFFFFF);   // Lower 32 bits
-
-        return encode_priostate(state, priority, statevars, priovars);
-    } 
-    bdd left = bdd_false();
-    bdd right = bdd_false();
-
-    left = collect_targets(bdd_low(trans), res, statevars, priovars);
-    right = collect_targets(bdd_high(trans), res, statevars, priovars);
-
-    return bdd_or(left, right);
+    return tree;
 }
 
 void Game::construct_game()
 {
-    auto bdd_dict = this->automaton->get_dict();
+    // Convert the atomic propositions to strings
+    this->convert_ap();
 
-    std::unordered_map<int, bdd> ap_map;
-    for (unsigned int i = 0; i < this->automaton->ap().size(); ++i)
+    // convert transitions condition to tree
+    for (int i = 0; i < this->automaton->num_states(); i++)
     {
-        ap_map[i] = bdd_ithvar(i);
+        State *state = new State(i);
+        this->states.push_back(state);
     }
 
-    int nextIndex = 0;
-    std::vector<int> succ_state;
-    std::vector<int> succ_inter;
-
-    std::set<uint64_t> targets;
-    std::map<bdd, int> inter_vertices;
-    std::map<uint64_t, int> target_vertices;
-
-    const auto cap_count = controllable_aps.size();
-    const auto uap_count = this->automaton->ap().size() - cap_count;
-
-    bdd leaf = bddfalse;
-    bdd lblbdd = bddfalse;
-
-    for (unsigned int state = 0; state < this->automaton->num_states(); ++state)
+    for (int i = 0; i < this->automaton->num_states(); i++)
     {
-        bdd trans_bdd = bddfalse;
-        std::ostringstream oss;
-        std::string t_acc_set;
-
-        for (auto &trans : this->automaton->out(state))
+        State *state = this->states[i];
+        for (auto &trans : this->automaton->out(i))
         {
-            lblbdd = trans.cond;
-            int priority = 0;
-            int new_priority = 0;
-            if (this->automaton->prop_state_acc() != true)
-            {
-                oss << trans.acc;
-                t_acc_set = oss.str();
-                priority = this->extract_priority(t_acc_set);
-                new_priority = this->adjust_priority(priority);
-            }
-            uint64_t target_val = ((uint64_t)new_priority << 32) | (uint64_t)trans.dst;
-
-            leaf = bdd_ithvar(target_val);
-            trans_bdd |= lblbdd & leaf;
-        }
-
-        std::set<bdd> subroots;
-
-        this->collect_sub_roots(trans_bdd, uap_count, subroots);
-
-        for (auto &subroot : subroots)
-        {
-            auto targets_bdd = this->collect_targets(subroot, targets, bdd_dict->state_vars(), bdd_dict->priovars());
+            State *next_state = this->states[trans.dst];
+            BTTree *tree = this->create_transition_based_tree(trans.cond);
         }
     }
 }
