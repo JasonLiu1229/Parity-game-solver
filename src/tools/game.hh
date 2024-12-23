@@ -101,7 +101,7 @@ private:
         return nullptr;
     }
 
-    bool is_leaf(bdd root) { return root == bddfalse || root == bddtrue; }
+    bool is_leaf(bdd root) { return root == bdd_false() || root == bdd_true(); }
 };
 
 #endif // GAME_HH

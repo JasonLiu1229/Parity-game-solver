@@ -134,15 +134,6 @@ bdd Game::encode_priority(int priority, int priobits)
     return cube;
 }
 
-bdd Game::collect_targets(bdd trans, std::set<uint64_t> &res, bdd statevars, bdd priovars)
-{
-    if (this->is_leaf(trans))
-    {
-        uint64_t leaf = (trans == bddtrue) ? 1 : 0; 
-        res.insert(leaf);
-    }
-}
-
 bdd Game::encode_priostate(int state, int priority, bdd statevars, bdd priovars)
 {
     std::vector<int> state_var_list;
@@ -154,7 +145,7 @@ bdd Game::encode_priostate(int state, int priority, bdd statevars, bdd priovars)
     // Extract variables from statevars (state bits)
     extract_vars(statevars, state_var_list);
 
-    bdd cube = bddtrue;
+    bdd cube = bdd_true();
 
     uint32_t state_binary = state;
     uint32_t prio_binary = priority;
@@ -190,6 +181,28 @@ bdd Game::encode_priostate(int state, int priority, bdd statevars, bdd priovars)
     return cube;
 }
 
+bdd Game::collect_targets(bdd trans, std::set<uint64_t> &res, bdd statevars, bdd priovars)
+{
+    if (this->is_leaf(trans))
+    {
+        uint64_t leaf = (trans == bdd_true()) ? 1 : 0; 
+        res.insert(leaf);
+
+        // Decode priority and state
+        uint32_t priority = (uint32_t)(leaf >> 32);       // Higher 32 bits
+        uint32_t state = (uint32_t)(leaf & 0xFFFFFFFF);   // Lower 32 bits
+
+        return encode_priostate(state, priority, statevars, priovars);
+    } 
+    bdd left = bdd_false();
+    bdd right = bdd_false();
+
+    left = collect_targets(bdd_low(trans), res, statevars, priovars);
+    right = collect_targets(bdd_high(trans), res, statevars, priovars);
+
+    return bdd_or(left, right);
+}
+
 void Game::construct_game()
 {
     auto bdd_dict = this->automaton->get_dict();
@@ -211,6 +224,9 @@ void Game::construct_game()
     const auto cap_count = controllable_aps.size();
     const auto uap_count = this->automaton->ap().size() - cap_count;
 
+    bdd leaf = bddfalse;
+    bdd lblbdd = bddfalse;
+
     for (unsigned int state = 0; state < this->automaton->num_states(); ++state)
     {
         bdd trans_bdd = bddfalse;
@@ -219,7 +235,7 @@ void Game::construct_game()
 
         for (auto &trans : this->automaton->out(state))
         {
-            bdd lblbdd = trans.cond;
+            lblbdd = trans.cond;
             int priority = 0;
             int new_priority = 0;
             if (this->automaton->prop_state_acc() != true)
@@ -231,7 +247,7 @@ void Game::construct_game()
             }
             uint64_t target_val = ((uint64_t)new_priority << 32) | (uint64_t)trans.dst;
 
-            bdd leaf = bdd_ithvar(target_val);
+            leaf = bdd_ithvar(target_val);
             trans_bdd |= lblbdd & leaf;
         }
 
@@ -241,6 +257,7 @@ void Game::construct_game()
 
         for (auto &subroot : subroots)
         {
+            auto targets_bdd = this->collect_targets(subroot, targets, bdd_dict->state_vars(), bdd_dict->priovars());
         }
     }
 }
