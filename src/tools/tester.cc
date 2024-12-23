@@ -88,12 +88,18 @@ void Tester::clear_render()
     }
 }
 
-void Tester::test_single_solver()
+void Tester::test_single_solver(std::string input_file)
 {
+    std::cout << "======================================================" << std::endl;
     // start of timer
     auto start = std::chrono::high_resolution_clock::now();
 
     // some functions
+    Parser parser;
+    auto aut = parser.parse(input_file);
+
+    Solver solver(aut, parser.getControllableAPs());
+    solver.solve();
 
     // end of timer
     auto end = std::chrono::high_resolution_clock::now();
@@ -101,4 +107,37 @@ void Tester::test_single_solver()
     // calculate duration
     std::chrono::duration<double, std::milli> duration = end - start;
     std::cout << "Duration: " << duration.count() << "ms" << std::endl;
+    std::cout << "======================================================" << std::endl;
+}
+
+void Tester::test_solver_directory(){
+    std::string path = this->directory;
+
+    if (!std::filesystem::exists(path))
+    {
+        std::cerr << "Directory does not exist" << std::endl;
+        return;
+    }
+
+    std::cout << "Running solver test" << std::endl;
+
+    for (const auto &dirEntry : recursive_directory_iterator(path))
+    {
+        if (dirEntry.path().extension() == ".ehoa" || dirEntry.path().extension() == ".hoa")
+        {
+            std::string inputPath = dirEntry.path().string();
+
+            std::ifstream inputFile(inputPath);
+
+            if (!inputFile.is_open())
+            {
+                std::cerr << "Could not open input file: " << inputPath << std::endl;
+                continue;
+            }
+
+            std::cout << "Solving " << inputPath << std::endl;
+
+            this->test_single_solver(inputPath);
+        }
+    }
 }
