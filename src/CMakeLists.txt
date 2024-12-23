@@ -10,7 +10,6 @@ set(TOOLS
         tools/renderer.cc
         tools/tester.cc
         tools/solver.cc
-        tools/game.cc
 )
 
 # include dir

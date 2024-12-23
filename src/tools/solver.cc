@@ -108,16 +108,28 @@ int Solver::check_player(int state)
     return 1;
 }
 
-void Solver::solve()
-{
-    if (this->automaton->prop_state_acc() != true)
-    {
-        this->reconstruct_transition_based_to_state_based();
-        std::cout << "Transition-based automaton reconstructed to state-based automaton" << std::endl;
-    }
-    // this->solve_state_based();
+spot::twa_graph_ptr Solver::create_arena(){
+    
 }
 
 
+void Solver::solve()
+{
+    // if (this->automaton->prop_state_acc() != true)
+    // {
+    //     this->reconstruct_transition_based_to_state_based();
+    //     std::cout << "Transition-based automaton reconstructed to state-based automaton" << std::endl;
+    // }
+    // this->solve_state_based();
+    
+    std::vector<bool> owners;
 
+    for (int i = 0; i < this->automaton->num_states(); i++)
+    {
+        owners.push_back(true);
+    }
+    spot::set_state_players(this->automaton, owners);
 
+    bool output = spot::solve_parity_game(this->automaton);
+    std::cout << output << std::endl;
+}

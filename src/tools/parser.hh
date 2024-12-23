@@ -7,6 +7,7 @@
 #include <map>
 #include <fstream>
 #include <sstream>
+#include <cctype>
 
 #include <spot/parseaut/public.hh>
 #include <spot/twaalgos/postproc.hh>
@@ -21,6 +22,8 @@ class Parser
 
     bool is_max = true;
     bool is_even = true;
+
+    int no_priorities = 0;
 
 public:
     Parser();

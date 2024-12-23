@@ -2,8 +2,6 @@
 
 #include "tools/tester.hh"
 #include "tools/solver.hh"
-#include "tools/game.hh"
-
 #define INPUT_FILE "../HOA_files/ActionConverter.tlsf.ehoa"
 #define TEST_DIR "../HOA_files"
 
@@ -15,11 +13,9 @@ int main()
     Solver solver(aut, parser.getControllableAPs());
     solver.solve();
 
-    aut = solver.get_automaton();
+    // aut = solver.get_automaton();
 
     // std::cout << aut->prop_state_acc() << std::endl;
-
-    Game game(aut, parser.isMax(), parser.isEven(), parser.getControllableAPs());
 
     // Renderer renderer;
     // renderer.render(aut, INPUT_FILE, true);

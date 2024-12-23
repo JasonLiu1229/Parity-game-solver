@@ -6,6 +6,8 @@
 #include <spot/twa/bddprint.hh>
 #include <spot/twa/twagraph.hh>
 #include <spot/twaalgos/translate.hh>
+#include <spot/twaalgos/game.hh>
+#include <spot/twaalgos/parity.hh>
 
 #include <iostream>
 #include <vector>
@@ -49,6 +51,9 @@ private:
     void zielonka_recursive(std::unordered_set<int> &winning, std::unordered_set<int> &losing, int player);
 
     std::pair<std::unordered_set<int>, std::unordered_set<int>> zielonka(int player);
+
+    spot::twa_graph_ptr create_arena();
+    
 };
 
 #endif // SOLVER_HH

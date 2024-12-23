@@ -67,6 +67,12 @@ spot::twa_graph_ptr Parser::parse(const std::string &filename)
                 {
                     this->is_max = false;
                 }
+
+                for (auto &it : line){
+                    if (isdigit(it)){
+                        this->no_priorities = std::stoi(&it);
+                    }
+                }
             }
         }
     }
