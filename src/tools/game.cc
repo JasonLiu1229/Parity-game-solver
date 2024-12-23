@@ -29,7 +29,7 @@ int Game::extract_priority(std::string acc_set)
 
 void Game::collect_sub_roots(bdd root, int firstVar, std::set<bdd> &collector)
 {
-    std::stack<bdd> stack;           
+    std::stack<bdd> stack;
     std::unordered_set<int> visited; // Track visited nodes to avoid cycles
 
     stack.push(root);
@@ -71,7 +71,8 @@ void Game::collect_sub_roots(bdd root, int firstVar, std::set<bdd> &collector)
     }
 }
 
-void Game::extract_vars(bdd root, std::vector<int> &vars){
+void Game::extract_vars(bdd root, std::vector<int> &vars)
+{
     if (root == bddfalse || root == bddtrue)
     {
         return;
@@ -88,7 +89,7 @@ bdd Game::encode_state(int state, bdd statevars)
 {
     std::vector<int> vars;
     this->extract_vars(statevars, vars);
-    
+
     bdd cube = bddtrue;
 
     uint32_t state_binary = state;
@@ -97,9 +98,12 @@ bdd Game::encode_state(int state, bdd statevars)
     {
         int var = *it;
 
-        if (state_binary & 1){
+        if (state_binary & 1)
+        {
             cube &= bdd_ithvar(var);
-        } else {
+        }
+        else
+        {
             cube &= bdd_nithvar(var);
         }
 
@@ -130,6 +134,15 @@ bdd Game::encode_priority(int priority, int priobits)
     return cube;
 }
 
+bdd Game::collect_targets(bdd trans, std::set<uint64_t> &res, bdd statevars, bdd priovars)
+{
+    if (this->is_leaf(trans))
+    {
+        uint64_t leaf = (trans == bddtrue) ? 1 : 0; 
+        res.insert(leaf);
+    }
+}
+
 bdd Game::encode_priostate(int state, int priority, bdd statevars, bdd priovars)
 {
     std::vector<int> state_var_list;
@@ -139,7 +152,42 @@ bdd Game::encode_priostate(int state, int priority, bdd statevars, bdd priovars)
     extract_vars(priovars, prio_var_list);
 
     // Extract variables from statevars (state bits)
-    extract_vars(statevars, state_var_list);   
+    extract_vars(statevars, state_var_list);
+
+    bdd cube = bddtrue;
+
+    uint32_t state_binary = state;
+    uint32_t prio_binary = priority;
+
+    for (auto it = state_var_list.rbegin(); it != state_var_list.rend(); ++it)
+    {
+        int var = *it;
+        if (state_binary & 1)
+        {
+            cube &= bdd_ithvar(var); // Set to 1
+        }
+        else
+        {
+            cube &= bdd_nithvar(var); // Set to 0
+        }
+        state_binary >>= 1;
+    }
+
+    for (auto it = prio_var_list.rbegin(); it != prio_var_list.rend(); ++it)
+    {
+        int var = *it;
+        if (prio_binary & 1)
+        {
+            cube &= bdd_ithvar(var); // Set to 1
+        }
+        else
+        {
+            cube &= bdd_nithvar(var); // Set to 0
+        }
+        prio_binary >>= 1;
+    }
+
+    return cube;
 }
 
 void Game::construct_game()
@@ -188,12 +236,11 @@ void Game::construct_game()
         }
 
         std::set<bdd> subroots;
-        
+
         this->collect_sub_roots(trans_bdd, uap_count, subroots);
 
         for (auto &subroot : subroots)
         {
-            
         }
     }
 }

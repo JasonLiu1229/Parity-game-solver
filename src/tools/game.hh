@@ -100,6 +100,8 @@ private:
         }
         return nullptr;
     }
+
+    bool is_leaf(bdd root) { return root == bddfalse || root == bddtrue; }
 };
 
 #endif // GAME_HH
