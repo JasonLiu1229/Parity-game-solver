@@ -14,6 +14,7 @@
 #include <queue>
 #include <set>
 #include <cassert>
+#include <stack>
 
 class edge
 {
@@ -79,6 +80,14 @@ private:
     // Game creation helper functions
     void construct_game();
     int adjust_priority(int priority);
+    int extract_priority(std::string acc_set);
+    void collect_sub_roots(bdd root, int firstVar, std::set<bdd> &sub_roots);
+
+    void extract_vars(bdd root, std::vector<int> &vars);
+    bdd encode_state(int state, bdd statevars);
+    bdd encode_priority(int priority, int priobits);
+    bdd encode_priostate(int state, int priority, bdd statevars, bdd priovars);
+    bdd collect_targets(bdd trans, std::set<uint64_t> &res, bdd statevars, bdd priovars);
 
     // Other helper functions
     void add_vertex(vertex *v) { this->vertices.push_back(v); }
