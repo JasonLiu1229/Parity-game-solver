@@ -69,6 +69,8 @@ private:
     Vertex* create_vertex(int id, int priority, int owner);
 
     int adjust_priority(int priority);
+
+    std::vector<int> get_subset_aps_from_cond(bdd cond, const std::vector<int> &uap);
     
 };
 

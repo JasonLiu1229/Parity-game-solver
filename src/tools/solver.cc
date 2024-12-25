@@ -57,7 +57,7 @@ void Solver::reconstruct_transition_based_to_state_based()
 
             new_automaton->new_edge(src, intermediate, t.cond);
 
-            new_automaton->new_edge(intermediate, dst, bddtrue, t.acc);
+            new_automaton->new_edge(intermediate, dst, bdd_true(), t.acc);
         }
     }
 
@@ -135,6 +135,7 @@ spot::twa_graph_ptr Solver::create_arena(){
     // convert the init state to vertex
     int init_state = this->automaton->get_init_state_number();
     int priority = this->get_priority(init_state);
+    
     int owner = 1;
     Vertex* init_vertex = this->create_vertex(init_state, this->adjust_priority(priority), owner);
 
@@ -142,11 +143,12 @@ spot::twa_graph_ptr Solver::create_arena(){
     vertices.push_back(init_vertex);
 
     /*
-    Three cases for the transitions:
-    1. Only controllable transitions are present, this is player 0's turn
-    2. Only uncontrollable transitions are present, this is player 1's turn
-    3. Both controllable and uncontrollable transitions are present, this is player 1's turn first and then we convert to player 0's turn
-        - This creates two states, one for player 1 and one for player 0 
+    Four cases for the transitions:
+    1. If the condition is true, then just go to the next state and set next state as player 1
+    2. Only controllable transitions are present, this is player 0's turn
+    3. Only uncontrollable transitions are present, this is player 1's turn
+    4. Both controllable and uncontrollable transitions are present, this is player 1's turn first and then we convert to player 0's turn
+        - This creates two states, one for player 1 and one for player 0  
     */
 
     while (!queue.empty())
@@ -163,7 +165,29 @@ spot::twa_graph_ptr Solver::create_arena(){
 
         // get the state
         int state = current->id;
-        
+        int current_owner = current->owner;
+        for (auto &t : this->automaton->out(state))
+        {
+            int dst = t.dst;
+            std::vector<int> cond_uap = this->get_subset_aps_from_cond(t.cond, uap);
+            std::vector<int> cond_cap = this->get_subset_aps_from_cond(t.cond, this->controllable_aps);
+            unsigned int src_priority = this->get_priority(state);
+            unsigned int dst_priority = this->get_priority(dst);
+            // case 1 if the condition is true then just go to next state
+            if (t.cond == bdd_true()){
+                owner = 1;
+                Vertex* new_vertex = this->create_vertex(dst, this->adjust_priority(dst_priority), owner);
+                queue.push_back(new_vertex);
+                vertices.push_back(new_vertex);
+                this->arena->new_edge(current->id, new_vertex->id, t.cond, {src_priority});
+            } 
+            // case 2 if only controllable transitions are present
+            else if (cond_uap.empty() && !cond_cap.empty()){
+                owner = 0;
+               // generate every possible condition configuration
+               
+            }
+        }
     }
 
 }
@@ -171,21 +195,23 @@ spot::twa_graph_ptr Solver::create_arena(){
 
 void Solver::solve()
 {
-    // if (this->automaton->prop_state_acc() != true)
-    // {
-    //     this->reconstruct_transition_based_to_state_based();
-    //     std::cout << "Transition-based automaton reconstructed to state-based automaton" << std::endl;
-    // }
-    // this->solve_state_based();
-    
-    std::vector<bool> owners;
-
-    for (int i = 0; i < this->automaton->num_states(); i++)
+    if (this->automaton->prop_state_acc() != true)
     {
-        owners.push_back(true);
+        this->reconstruct_transition_based_to_state_based();
+        std::cout << "Transition-based automaton reconstructed to state-based automaton" << std::endl;
     }
-    spot::set_state_players(this->automaton, owners);
+    
+    // std::vector<bool> owners;
 
-    bool output = spot::solve_parity_game(this->automaton);
+    // for (int i = 0; i < this->automaton->num_states(); i++)
+    // {
+    //     owners.push_back(true);
+    // }
+    // spot::set_state_players(this->automaton, owners);
+
+    this->create_arena();
+
+    bool output = spot::solve_parity_game(this->arena);
+    // spot::highlight_strategy(this->arena);
     std::cout << output << std::endl;
 }
