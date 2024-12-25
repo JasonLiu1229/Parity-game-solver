@@ -1,6 +1,6 @@
 # SV-Project
 
-This project is based on a project made by [Guillermo Perez](https://github.com/gaperez64/).  See: [HOA-TOOLS](https://github.com/SYNTCOMP/hoa-tools).
+This project is based on a project made by [Guillermo Perez](https://github.com/gaperez64/). See: [HOA-TOOLS](https://github.com/SYNTCOMP/hoa-tools).
 
 ## How to run
 
@@ -20,5 +20,5 @@ cd src
 
 ## Packages
 
-Spot parser 
+Spot parser
 BuDDy BDD objects
