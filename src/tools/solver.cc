@@ -176,10 +176,23 @@ void Solver::create_arena()
             } // case 2 if our current owner is player 1 => then we can only manipulate uncontrolled ap
             else if (current->owner == 1)
             {
-
+                /* 
+                generate every possible combination of uncontrolled aps, 
+                if the bdd results in true,
+                then we can go to the next state 
+                else check if bdd has controlled aps
+                then go to next state with owner 0
+                else do nothing
+                */
             } // case 3 if our current owner is player 0 => then we can only manipulate controlled ap
             else if (current->owner == 0)
             {
+                /* 
+                generate every possible combination of controlled aps, 
+                if the bdd results in true,
+                then we can go to the next state 
+                else do nothing
+                */
             }
         }
     }
