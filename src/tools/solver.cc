@@ -142,15 +142,6 @@ spot::twa_graph_ptr Solver::create_arena(){
     queue.push_back(init_vertex);
     vertices.push_back(init_vertex);
 
-    /*
-    Four cases for the transitions:
-    1. If the condition is true, then just go to the next state and set next state as player 1
-    2. Only controllable transitions are present, this is player 0's turn
-    3. Only uncontrollable transitions are present, this is player 1's turn
-    4. Both controllable and uncontrollable transitions are present, this is player 1's turn first and then we convert to player 0's turn
-        - This creates two states, one for player 1 and one for player 0  
-    */
-
     while (!queue.empty())
     {
         Vertex* current = queue.front();
@@ -180,12 +171,12 @@ spot::twa_graph_ptr Solver::create_arena(){
                 queue.push_back(new_vertex);
                 vertices.push_back(new_vertex);
                 this->arena->new_edge(current->id, new_vertex->id, t.cond, {src_priority});
-            } 
-            // case 2 if only controllable transitions are present
-            else if (cond_uap.empty() && !cond_cap.empty()){
-                owner = 0;
-               // generate every possible condition configuration
-               
+            } // case 2 if our current owner is player 1 => then we can only manipulate uncontrolled ap
+            else if (current->owner == 1){
+
+            } // case 3 if our current owner is player 0 => then we can only manipulate controlled ap
+            else if (current->owner == 0){
+
             }
         }
     }
