@@ -96,6 +96,19 @@ Vertex *Solver::create_vertex(int id, int priority, int owner)
     return new Vertex(id, priority, owner);
 }
 
+std::vector<bool> Solver::generate_binary_combinations(int n, int size)
+{
+    std::vector<bool> values(size, false);
+
+    for (int i = 0; i < n; i++)
+    {
+        values[i] = n % 2;
+        n /= 2;
+    }
+
+    return values;
+}
+
 void Solver::create_arena()
 {
 
@@ -161,8 +174,10 @@ void Solver::create_arena()
         for (auto &t : this->automaton->out(state))
         {
             int dst = t.dst;
+
             std::vector<int> cond_uap = this->get_subset_aps_from_cond(t.cond, uap);
             std::vector<int> cond_cap = this->get_subset_aps_from_cond(t.cond, this->controllable_aps);
+
             unsigned int src_priority = this->get_priority(state);
             unsigned int dst_priority = this->get_priority(dst);
             // case 1 if the condition is true then just go to next state
@@ -170,29 +185,42 @@ void Solver::create_arena()
             {
                 owner = 1;
                 Vertex *new_vertex = this->create_vertex(dst, this->adjust_priority(dst_priority), owner);
+                new_vertex->condition = bdd_true();
                 queue.push_back(new_vertex);
                 vertices.push_back(new_vertex);
                 this->arena->new_edge(current->id, new_vertex->id, t.cond, {src_priority});
             } // case 2 if our current owner is player 1 => then we can only manipulate uncontrolled ap
             else if (current->owner == 1)
             {
-                /* 
-                generate every possible combination of uncontrolled aps, 
+                /*
+                generate every possible combination of uncontrolled aps,
                 if the bdd results in true,
-                then we can go to the next state 
+                then we can go to the next state
                 else check if bdd has controlled aps
                 then go to next state with owner 0
                 else do nothing
                 */
+                std::vector<bool> values(cond_uap.size(), false);
+                for (int i = 0; i < cond_cap.size(); i++){
+                    values = this->generate_binary_combinations(i, cond_uap.size());
+
+                    // assign values to the condition
+
+                    // check if the condition is true
+
+                    // check if the condition has controlled aps
+
+                }
             } // case 3 if our current owner is player 0 => then we can only manipulate controlled ap
             else if (current->owner == 0)
             {
-                /* 
-                generate every possible combination of controlled aps, 
+                /*
+                generate every possible combination of controlled aps,
                 if the bdd results in true,
-                then we can go to the next state 
+                then we can go to the next state
                 else do nothing
                 */
+                std::vector<bool> values(cond_cap.size(), false);
             }
         }
     }
