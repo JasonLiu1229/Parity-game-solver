@@ -73,43 +73,99 @@ void Solver::reconstruct_transition_based_to_state_based()
     this->automaton = new_automaton;
 }
 
-int Solver::check_player(int state)
+int Solver::adjust_priority(int priority)
 {
-    std::vector<std::string> converted_ap;
-    const spot::bdd_dict_ptr &dict = this->automaton->get_dict();
-
-    std::vector<bdd> con_aps;
-
-    for (auto &ap : this->controllable_aps)
+    int new_priority = 0;
+    if (!this->isMax)
     {
-        con_aps.push_back(bdd_ithvar(ap));
+        int max_priority = 2 * ((this->no_priorities + 1) / 2);
+        new_priority = max_priority - priority;
     }
 
-    for (auto &t : this->automaton->out(state))
+    new_priority += 2;
+
+    if (!this->isEven)
     {
-        if (t.cond == bddtrue)
-        {
-            return 1;
-        }
-        else
-        {
-            std::string cond = spot::bdd_format_formula(dict, t.cond);
-            for (auto &ap : con_aps)
-            {
-                std::string con_ap_str = spot::bdd_format_formula(dict, ap);
-                // if con ap is in the condition
-                if (cond.find(con_ap_str) != std::string::npos)
-                {
-                    return 0;
-                }
-            }
-        }
+        new_priority = priority - 1;
     }
-    return 1;
+    return new_priority;
+}
+
+Vertex* Solver::create_vertex(int id, int priority, int owner)
+{
+    return new Vertex(id, priority, owner);
 }
 
 spot::twa_graph_ptr Solver::create_arena(){
-    
+
+    // create arena
+    this->arena = spot::make_twa_graph(this->automaton->get_dict());
+    this->arena->new_states(this->automaton->num_states());
+    this->arena->set_init_state(this->automaton->get_init_state_number());
+
+    std::vector<Vertex*> queue;
+
+    std::vector<Vertex*> vertices; // new vertices 
+    std::vector<Vertex*> visited;
+
+    std::vector<int> uap; // uncontrollable aps
+
+    auto aps = this->automaton->ap();
+
+    for (int i = 0; i < aps.size(); i++)
+    {
+        bool found = false;
+        int ap_int = this->automaton->register_ap(aps[i]);
+
+        for (int j = 0; j < this->controllable_aps.size(); j++)
+        {
+            if (ap_int == this->controllable_aps[j])
+            {
+                found = true;
+                break;
+            }
+        }
+
+        if (!found)
+        {
+            uap.push_back(ap_int);
+        }
+    }
+
+    // convert the init state to vertex
+    int init_state = this->automaton->get_init_state_number();
+    int priority = this->get_priority(init_state);
+    int owner = 1;
+    Vertex* init_vertex = this->create_vertex(init_state, this->adjust_priority(priority), owner);
+
+    queue.push_back(init_vertex);
+    vertices.push_back(init_vertex);
+
+    /*
+    Three cases for the transitions:
+    1. Only controllable transitions are present, this is player 0's turn
+    2. Only uncontrollable transitions are present, this is player 1's turn
+    3. Both controllable and uncontrollable transitions are present, this is player 1's turn first and then we convert to player 0's turn
+        - This creates two states, one for player 1 and one for player 0 
+    */
+
+    while (!queue.empty())
+    {
+        Vertex* current = queue.front();
+        queue.erase(queue.begin());
+
+        if (std::find(visited.begin(), visited.end(), current) != visited.end())
+        {
+            continue;
+        }
+
+        visited.push_back(current);
+
+        // get the state
+        int state = current->id;
+        
+    }
+
 }
 
 
