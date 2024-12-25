@@ -1,6 +1,6 @@
 # SV-Project
 
-This project is based on a file format made by [Guillermo Perez](https://github.com/gaperez64/)
+This project is based on a project made by [Guillermo Perez](https://github.com/gaperez64/).  See: [HOA-TOOLS](https://github.com/SYNTCOMP/hoa-tools).
 
 ## How to run
 
