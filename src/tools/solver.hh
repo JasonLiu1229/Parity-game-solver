@@ -16,7 +16,8 @@
 #include <queue>
 #include <set>
 
-class Vertex {
+class Vertex
+{
 public:
     int id;
     int priority;
@@ -28,7 +29,7 @@ public:
 class Solver
 {
     spot::twa_graph_ptr automaton;
-    spot::twa_graph_ptr arena;
+    spot::twa_graph_ptr arena = nullptr;
 
     std::vector<int> controllable_aps;
     bool isMax = true;
@@ -38,7 +39,7 @@ class Solver
 public:
     explicit Solver(const spot::twa_graph_ptr &aut) : automaton(aut) {}
     explicit Solver(const spot::twa_graph_ptr &aut, const std::vector<int> &controllable_aps) : automaton(aut), controllable_aps(controllable_aps) {}
-    explicit Solver (const spot::twa_graph_ptr &aut, const std::vector<int> &controllable_aps, bool isMax, bool isEven, int no_priorities) : automaton(aut), controllable_aps(controllable_aps), isMax(isMax), isEven(isEven), no_priorities(no_priorities) {}
+    explicit Solver(const spot::twa_graph_ptr &aut, const std::vector<int> &controllable_aps, bool isMax, bool isEven, int no_priorities) : automaton(aut), controllable_aps(controllable_aps), isMax(isMax), isEven(isEven), no_priorities(no_priorities) {}
     explicit Solver() = default;
     ~Solver() = default;
 
@@ -64,14 +65,13 @@ private:
 
     std::pair<std::unordered_set<int>, std::unordered_set<int>> zielonka(int player);
 
-    spot::twa_graph_ptr create_arena();
+    void create_arena();
 
-    Vertex* create_vertex(int id, int priority, int owner);
+    Vertex *create_vertex(int id, int priority, int owner);
 
     int adjust_priority(int priority);
 
     std::vector<int> get_subset_aps_from_cond(bdd cond, const std::vector<int> &uap);
-    
 };
 
 #endif // SOLVER_HH

@@ -91,22 +91,23 @@ int Solver::adjust_priority(int priority)
     return new_priority;
 }
 
-Vertex* Solver::create_vertex(int id, int priority, int owner)
+Vertex *Solver::create_vertex(int id, int priority, int owner)
 {
     return new Vertex(id, priority, owner);
 }
 
-spot::twa_graph_ptr Solver::create_arena(){
+void Solver::create_arena()
+{
 
     // create arena
     this->arena = spot::make_twa_graph(this->automaton->get_dict());
     this->arena->new_states(this->automaton->num_states());
     this->arena->set_init_state(this->automaton->get_init_state_number());
 
-    std::vector<Vertex*> queue;
+    std::vector<Vertex *> queue;
 
-    std::vector<Vertex*> vertices; // new vertices 
-    std::vector<Vertex*> visited;
+    std::vector<Vertex *> vertices; // new vertices
+    std::vector<Vertex *> visited;
 
     std::vector<int> uap; // uncontrollable aps
 
@@ -135,16 +136,16 @@ spot::twa_graph_ptr Solver::create_arena(){
     // convert the init state to vertex
     int init_state = this->automaton->get_init_state_number();
     int priority = this->get_priority(init_state);
-    
+
     int owner = 1;
-    Vertex* init_vertex = this->create_vertex(init_state, this->adjust_priority(priority), owner);
+    Vertex *init_vertex = this->create_vertex(init_state, this->adjust_priority(priority), owner);
 
     queue.push_back(init_vertex);
     vertices.push_back(init_vertex);
 
     while (!queue.empty())
     {
-        Vertex* current = queue.front();
+        Vertex *current = queue.front();
         queue.erase(queue.begin());
 
         if (std::find(visited.begin(), visited.end(), current) != visited.end())
@@ -165,24 +166,24 @@ spot::twa_graph_ptr Solver::create_arena(){
             unsigned int src_priority = this->get_priority(state);
             unsigned int dst_priority = this->get_priority(dst);
             // case 1 if the condition is true then just go to next state
-            if (t.cond == bdd_true()){
+            if (t.cond == bdd_true())
+            {
                 owner = 1;
-                Vertex* new_vertex = this->create_vertex(dst, this->adjust_priority(dst_priority), owner);
+                Vertex *new_vertex = this->create_vertex(dst, this->adjust_priority(dst_priority), owner);
                 queue.push_back(new_vertex);
                 vertices.push_back(new_vertex);
                 this->arena->new_edge(current->id, new_vertex->id, t.cond, {src_priority});
             } // case 2 if our current owner is player 1 => then we can only manipulate uncontrolled ap
-            else if (current->owner == 1){
+            else if (current->owner == 1)
+            {
 
             } // case 3 if our current owner is player 0 => then we can only manipulate controlled ap
-            else if (current->owner == 0){
-
+            else if (current->owner == 0)
+            {
             }
         }
     }
-
 }
-
 
 void Solver::solve()
 {
@@ -191,7 +192,7 @@ void Solver::solve()
         this->reconstruct_transition_based_to_state_based();
         std::cout << "Transition-based automaton reconstructed to state-based automaton" << std::endl;
     }
-    
+
     // std::vector<bool> owners;
 
     // for (int i = 0; i < this->automaton->num_states(); i++)
