@@ -72,9 +72,11 @@ private:
 
     int adjust_priority(int priority);
 
-    std::vector<int> get_subset_aps_from_cond(bdd cond, const std::vector<int> &uap);
+    std::vector<int> get_subset_aps_from_cond(bdd cond, const std::vector<int> &ap);
 
     std::vector<bool> generate_binary_combinations(int n, int size);
+
+    bdd itbdd(int i);
 };
 
 #endif // SOLVER_HH

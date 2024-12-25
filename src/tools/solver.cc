@@ -109,11 +109,49 @@ std::vector<bool> Solver::generate_binary_combinations(int n, int size)
     return values;
 }
 
+// int to bdd
+bdd Solver::itbdd(int i)
+{
+    spot::bdd_dict_ptr dict = this->automaton->get_dict();
+
+    auto variable_map = dict->var_map;
+
+    assert(i >= variable_map.size());
+
+    for (auto &it : variable_map)
+    {
+        if (i == it.second){
+            return bdd_ithvar(it.second);
+        }
+    }
+
+}
+
+std::vector<int> Solver::get_subset_aps_from_cond(bdd cond, const std::vector<int> &ap)
+{
+    spot::bdd_dict_ptr dict = this->automaton->get_dict();
+
+    std::string cond_str = spot::bdd_format_formula(dict, cond);
+    std::vector<int> subset_aps;
+    
+    auto variable_map = dict->var_map;
+
+    // TODO
+    for (auto &it : variable_map){
+        continue;
+    }
+
+    // ============================
+
+    return subset_aps;
+}
+
 void Solver::create_arena()
 {
+    spot::bdd_dict_ptr dict = this->automaton->get_dict();
 
     // create arena
-    this->arena = spot::make_twa_graph(this->automaton->get_dict());
+    this->arena = spot::make_twa_graph(dict);
     this->arena->new_states(this->automaton->num_states());
     this->arena->set_init_state(this->automaton->get_init_state_number());
 
@@ -201,7 +239,16 @@ void Solver::create_arena()
                 else do nothing
                 */
                 std::vector<bool> values(cond_uap.size(), false);
-                for (int i = 0; i < cond_cap.size(); i++){
+                std::vector<bdd> uap_bdd;
+
+                for (int i = 0; i < cond_uap.size(); i++)
+                {
+                    // TODO : implement this function
+                    continue;
+                }
+
+                for (int i = 0; i < cond_cap.size(); i++)
+                {
                     values = this->generate_binary_combinations(i, cond_uap.size());
 
                     // assign values to the condition
@@ -209,7 +256,6 @@ void Solver::create_arena()
                     // check if the condition is true
 
                     // check if the condition has controlled aps
-
                 }
             } // case 3 if our current owner is player 0 => then we can only manipulate controlled ap
             else if (current->owner == 0)
