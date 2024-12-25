@@ -22,6 +22,7 @@ public:
     int id;
     int priority;
     int owner;
+    bdd condition;
     Vertex(int id, int priority, int owner) : id(id), priority(priority), owner(owner) {}
     ~Vertex() = default;
 };
