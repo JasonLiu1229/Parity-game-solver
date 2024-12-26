@@ -238,7 +238,8 @@ void Solver::create_arena()
             {
                 owner = 1;
                 Vertex *new_vertex = this->create_vertex(dst, this->adjust_priority(dst_priority), owner);
-                new_vertex->condition = bdd_true();
+                new_vertex->automaton_id = dst;
+                new_vertex->conditions[t.cond] = true;
                 queue.push_back(new_vertex);
                 vertices.push_back(new_vertex);
 
@@ -247,7 +248,6 @@ void Solver::create_arena()
                 {
                     int new_state = this->arena->new_state();
                     new_vertex->id = new_state;
-                    new_vertex->automaton_id = dst;
                 }
 
                 this->arena->new_edge(current->id, new_vertex->id, t.cond, {src_priority});

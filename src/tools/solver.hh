@@ -13,6 +13,8 @@
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
+#include <algorithm>
+#include <map>
 #include <queue>
 #include <set>
 #include <ostream>
@@ -27,7 +29,7 @@ public:
     int automaton_id;
     int priority;
     int owner;
-    bdd condition;
+    std::map<bdd, bool> conditions;
     Vertex(int id, int priority, int owner) : id(id), priority(priority), owner(owner) {}
     ~Vertex() = default;
 };
