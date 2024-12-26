@@ -258,7 +258,7 @@ void Solver::create_arena()
                 generate every possible combination of uncontrolled aps,
                 if the bdd results in true,
                 then we can go to the next state
-                else check if bdd has controlled aps 
+                else check if bdd has controlled aps
                 then go to next state with owner 0
                 else do nothing
                 */
@@ -275,7 +275,7 @@ void Solver::create_arena()
                     values = this->generate_binary_combinations(i, cond_uap.size());
 
                     // assign values to the condition
-                    
+
                     // check if the condition is true
 
                     // check if the condition has controlled aps

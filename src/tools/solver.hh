@@ -65,14 +65,6 @@ private:
 
     void build_state_based_game();
 
-    void solve_state_based();
-
-    std::set<int> attractor(const std::set<int> &target); // assume we are always player 0
-
-    void zielonka_recursive(std::unordered_set<int> &winning, std::unordered_set<int> &losing, int player);
-
-    std::pair<std::unordered_set<int>, std::unordered_set<int>> zielonka(int player);
-
     void create_arena();
 
     Vertex *create_vertex(int id, int priority, int owner);
