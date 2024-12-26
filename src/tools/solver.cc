@@ -70,6 +70,9 @@ void Solver::reconstruct_transition_based_to_state_based()
     // copy initial states
     new_automaton->set_init_state(this->automaton->get_init_state_number());
 
+    // copy acceptance
+    new_automaton->set_acceptance(this->automaton->get_acceptance());
+
     this->automaton = new_automaton;
 }
 
@@ -120,11 +123,12 @@ bdd Solver::itbdd(int i)
 
     for (auto &it : variable_map)
     {
-        if (i == it.second){
+        if (i == it.second)
+        {
             return bdd_ithvar(it.second);
         }
     }
-
+    return bdd_true();
 }
 
 std::vector<int> Solver::get_subset_aps_from_cond(bdd cond, const std::vector<int> &ap)
@@ -133,18 +137,21 @@ std::vector<int> Solver::get_subset_aps_from_cond(bdd cond, const std::vector<in
 
     std::string cond_str = spot::bdd_format_formula(dict, cond);
     std::vector<int> subset_aps;
-    
+
     auto variable_map = dict->var_map;
 
-    for (auto &var : variable_map){
-        if(!(std::find(ap.begin(), ap.end(), var.second) != ap.end())){
+    for (auto &var : variable_map)
+    {
+        if (!(std::find(ap.begin(), ap.end(), var.second) != ap.end()))
+        {
             continue;
         }
         std::ostringstream oss;
         oss << var.first;
         std::string var_str = oss.str();
-        
-        if (cond_str.find(var_str) != std::string::npos){
+
+        if (cond_str.find(var_str) != std::string::npos)
+        {
             subset_aps.push_back(var.second);
         }
     }
@@ -260,8 +267,7 @@ void Solver::create_arena()
 
                 for (int i = 0; i < cond_uap.size(); i++)
                 {
-                    // TODO : implement this function
-                    continue;
+                    uap_bdd.push_back(this->itbdd(cond_uap[i]));
                 }
 
                 for (int i = 0; i < cond_cap.size(); i++)
@@ -269,6 +275,7 @@ void Solver::create_arena()
                     values = this->generate_binary_combinations(i, cond_uap.size());
 
                     // assign values to the condition
+                    
 
                     // check if the condition is true
 
