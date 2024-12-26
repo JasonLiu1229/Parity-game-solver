@@ -10,7 +10,7 @@ int main()
     Parser parser;
     auto aut = parser.parse(INPUT_FILE);
 
-    Solver solver(aut, parser.getControllableAPs());
+    Solver solver(aut, parser.getControllableAPs(), parser.isMax(), parser.isEven(), parser.getNoPriorities());
     solver.solve();
 
     // aut = solver.get_automaton();

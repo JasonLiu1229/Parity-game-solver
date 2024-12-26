@@ -40,6 +40,8 @@ public:
     [[nodiscard]] bool isMax() const { return this->is_max; }
 
     [[nodiscard]] bool isEven() const { return this->is_even; }
+
+    [[nodiscard]] int getNoPriorities() const { return this->no_priorities; }
 };
 
 #endif // PARSER_HH
