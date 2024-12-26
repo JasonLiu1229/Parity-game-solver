@@ -24,6 +24,7 @@ class Vertex
 {
 public:
     int id;
+    int automaton_id;
     int priority;
     int owner;
     bdd condition;

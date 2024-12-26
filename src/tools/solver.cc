@@ -160,7 +160,7 @@ void Solver::create_arena()
 
     // create arena
     this->arena = spot::make_twa_graph(dict);
-    this->arena->new_states(this->automaton->num_states());
+    this->arena->new_states(10); // start with 10 states because it is HUUUUUUUGE
     this->arena->set_init_state(this->automaton->get_init_state_number());
 
     std::vector<Vertex *> queue;
@@ -234,6 +234,15 @@ void Solver::create_arena()
                 new_vertex->condition = bdd_true();
                 queue.push_back(new_vertex);
                 vertices.push_back(new_vertex);
+
+                // check if the id is already in the arena
+                if (new_vertex->id >= this->arena->num_states())
+                {
+                    int new_state = this->arena->new_state();
+                    new_vertex->id = new_state;
+                    new_vertex->automaton_id = dst;
+                }
+
                 this->arena->new_edge(current->id, new_vertex->id, t.cond, {src_priority});
             } // case 2 if our current owner is player 1 => then we can only manipulate uncontrolled ap
             else if (current->owner == 1)
