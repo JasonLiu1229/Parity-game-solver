@@ -136,9 +136,17 @@ std::vector<int> Solver::get_subset_aps_from_cond(bdd cond, const std::vector<in
     
     auto variable_map = dict->var_map;
 
-    // TODO
-    for (auto &it : variable_map){
-        continue;
+    for (auto &var : variable_map){
+        if(!(std::find(ap.begin(), ap.end(), var.second) != ap.end())){
+            continue;
+        }
+        std::ostringstream oss;
+        oss << var.first;
+        std::string var_str = oss.str();
+        
+        if (cond_str.find(var_str) != std::string::npos){
+            subset_aps.push_back(var.second);
+        }
     }
 
     // ============================
