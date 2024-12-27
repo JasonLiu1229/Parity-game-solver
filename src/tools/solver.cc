@@ -326,6 +326,24 @@ void Solver::create_arena()
                     if (cond_cap.size() > 0)
                     {
                         owner = 0;
+                        // check if dst is already in the vertices with owner 1
+                        bool found = false;
+                        for (auto &v : vertices)
+                        {
+                            if (v->id == dst && v->owner == 1)
+                            {
+                                v->conditions.try_emplace(t.cond, false);
+                                this->arena->new_edge(current->id, v->id, t.cond, src_prio_formatted);
+                                found = true;
+                                queue.push_back(v);
+                                break;
+                            }
+                        }
+                        if (found)
+                        {
+                            continue;
+                        }
+                        auto dst_priority = this->get_priority(dst);
                         Vertex *new_vertex = this->create_vertex(dst, this->adjust_priority(dst_priority), owner);
                         new_vertex->automaton_id = dst;
                         new_vertex->conditions.try_emplace(t.cond, false);
@@ -343,7 +361,7 @@ void Solver::create_arena()
                         continue;
                     }
                 }
-            } // case 3 if our current owner is player 0 => then we can only manipulate controlled ap
+            } // case 2 if our current owner is player 0 => then we can only manipulate controlled ap
             else if (current->owner == 0)
             {
                 /*
