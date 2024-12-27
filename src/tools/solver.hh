@@ -30,7 +30,7 @@ public:
     int automaton_id;
     int priority;
     int owner;
-    std::map<bdd, bool> conditions;
+    std::map<std::pair<bdd, int>, bool> conditions;
     Vertex(int id, int priority, int owner) : id(id), priority(priority), owner(owner) {}
     ~Vertex() = default;
 };
