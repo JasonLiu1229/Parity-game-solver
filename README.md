@@ -20,5 +20,5 @@ cd src
 
 ## Packages
 
-Spot parser
+Spot parser   
 BuDDy BDD objects
