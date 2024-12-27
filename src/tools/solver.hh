@@ -6,28 +6,56 @@
 #include <spot/twa/bddprint.hh>
 #include <spot/twa/twagraph.hh>
 #include <spot/twaalgos/translate.hh>
+#include <spot/twaalgos/game.hh>
+#include <spot/twaalgos/parity.hh>
 
 #include <iostream>
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
+#include <algorithm>
+#include <map>
 #include <queue>
 #include <set>
+#include <ostream>
+#include <sstream>
+#include <fstream>
+#include <string>
+#include <bits/stdc++.h>
+
+class Vertex
+{
+public:
+    int id;
+    int automaton_id;
+    int priority;
+    int owner;
+    std::map<std::pair<bdd, int>, bool> conditions;
+    Vertex(int id, int priority, int owner) : id(id), priority(priority), owner(owner) {}
+    ~Vertex() = default;
+};
 
 class Solver
 {
     spot::twa_graph_ptr automaton;
+    spot::twa_graph_ptr arena = nullptr;
+
     std::vector<int> controllable_aps;
+    bool isMax = true;
+    bool isEven = true;
+    int no_priorities = 0;
 
 public:
     explicit Solver(const spot::twa_graph_ptr &aut) : automaton(aut) {}
     explicit Solver(const spot::twa_graph_ptr &aut, const std::vector<int> &controllable_aps) : automaton(aut), controllable_aps(controllable_aps) {}
+    explicit Solver(const spot::twa_graph_ptr &aut, const std::vector<int> &controllable_aps, bool isMax, bool isEven, int no_priorities) : automaton(aut), controllable_aps(controllable_aps), isMax(isMax), isEven(isEven), no_priorities(no_priorities) {}
     explicit Solver() = default;
     ~Solver() = default;
 
     void solve();
 
     spot::twa_graph_ptr get_automaton() const { return this->automaton; }
+    spot::twa_graph_ptr get_arena() const { return this->arena; }
 
 private:
     int get_priority(int state);
@@ -38,19 +66,19 @@ private:
 
     void build_state_based_game();
 
-    void solve_state_based();
+    void create_arena();
 
-    int check_player(int state);
+    Vertex *create_vertex(int id, int priority, int owner);
 
-    std::set<int> attractor(const std::set<int> &target); // assume we are always player 0
+    int adjust_priority(int priority);
 
-    void zielonka_recursive(std::unordered_set<int> &winning, std::unordered_set<int> &losing, int player);
+    std::vector<int> get_subset_aps_from_cond(bdd cond, const std::vector<int> &ap);
 
-    std::pair<std::unordered_set<int>, std::unordered_set<int>> zielonka(int player);
+    std::vector<bool> generate_binary_combinations(int n, int size);
 
-    std::vector<int> compute_player_states(const std::vector<int> &states, int player);
+    bdd itbdd(int i);
 
-    std::set<int> compute_predecessors(int state);
+    void set_state_players();
 };
 
 #endif // SOLVER_HH

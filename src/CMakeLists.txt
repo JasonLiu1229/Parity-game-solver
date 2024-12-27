@@ -22,7 +22,7 @@ link_directories($ENV{HOME}/usr/lib)
 
 # Define executables
 add_executable(main main.cc ${TOOLS})
-add_executable(test test.cc)
+add_executable(test test.cc ${TOOLS})
 add_executable(example example_code/object_parser.cc)
 
 # Link Spot library to the targets

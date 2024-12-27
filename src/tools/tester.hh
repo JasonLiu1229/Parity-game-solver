@@ -8,6 +8,7 @@
 
 #include "renderer.hh"
 #include "parser.hh"
+#include "solver.hh"
 
 using recursive_directory_iterator = std::filesystem::recursive_directory_iterator;
 
@@ -22,7 +23,7 @@ public:
 
     void clear_render();
 
-    void test_single_solver();
+    void test_single_solver(std::string input_file);
 
     void test_solver_directory();
 };

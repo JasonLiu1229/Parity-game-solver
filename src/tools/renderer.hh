@@ -13,6 +13,9 @@
 #include <spot/twaalgos/sbacc.hh>
 #include <spot/twaalgos/hoa.hh>
 #include <spot/misc/formater.hh>
+#include <spot/tl/formula.hh>
+#include <spot/parseaut/public.hh>
+#include <spot/graph/graph.hh>
 
 #include <graphviz/gvc.h>
 
