@@ -21,6 +21,7 @@
 #include <sstream>
 #include <fstream>
 #include <string>
+#include <bits/stdc++.h>
 
 class Vertex
 {
@@ -76,6 +77,8 @@ private:
     std::vector<bool> generate_binary_combinations(int n, int size);
 
     bdd itbdd(int i);
+
+    void set_state_players();
 };
 
 #endif // SOLVER_HH

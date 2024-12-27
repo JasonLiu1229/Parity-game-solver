@@ -24,6 +24,11 @@ int Solver::get_priority(int state)
     oss << acc_sets;
     std::string acc_set = oss.str();
 
+    if (acc_set == "{}")
+    {
+        return -1;
+    }
+
     acc_set = acc_set.substr(1, acc_set.size() - 2);
 
     priority = std::stoi(acc_set);
@@ -173,7 +178,6 @@ void Solver::create_arena()
     std::vector<Vertex *> queue;
 
     std::vector<Vertex *> vertices; // new vertices
-    std::vector<Vertex *> visited;
 
     std::vector<int> uap; // uncontrollable aps
 
@@ -214,12 +218,24 @@ void Solver::create_arena()
         Vertex *current = queue.front();
         queue.erase(queue.begin());
 
-        if (std::find(visited.begin(), visited.end(), current) != visited.end())
+        if (current->owner == 0)
         {
-            continue;
-        }
+            // check if conditions are processed
+            bool condition_check = true;
+            for (auto &cond : current->conditions)
+            {
+                if (cond.second == false)
+                {
+                    condition_check = false;
+                    break;
+                }
+            }
 
-        visited.push_back(current);
+            if (condition_check)
+            {
+                continue;
+            }
+        }
 
         // get the state
         int state = current->id;
@@ -231,28 +247,14 @@ void Solver::create_arena()
             std::vector<int> cond_uap = this->get_subset_aps_from_cond(t.cond, uap);
             std::vector<int> cond_cap = this->get_subset_aps_from_cond(t.cond, this->controllable_aps);
 
-            unsigned int src_priority = this->get_priority(state);
-            unsigned int dst_priority = this->get_priority(dst);
-            // case 1 if the condition is true then just go to next state
-            if (t.cond == bdd_true())
+            unsigned int src_priority = current->priority;
+            std::initializer_list<unsigned int> src_prio_formatted = {};
+            if (src_priority != -1)
             {
-                owner = 1;
-                Vertex *new_vertex = this->create_vertex(dst, this->adjust_priority(dst_priority), owner);
-                new_vertex->automaton_id = dst;
-                // new_vertex->conditions[t.cond] = true;
-                queue.push_back(new_vertex);
-                vertices.push_back(new_vertex);
+                src_prio_formatted = {src_priority};
+            }
 
-                // check if the id is already in the arena
-                if (new_vertex->id >= this->arena->num_states())
-                {
-                    int new_state = this->arena->new_state();
-                    new_vertex->id = new_state;
-                }
-
-                this->arena->new_edge(current->id, new_vertex->id, t.cond, {src_priority});
-            } // case 2 if our current owner is player 1 => then we can only manipulate uncontrolled ap
-            else if (current->owner == 1)
+            if (current->owner == 1)
             {
                 /*
                 generate every possible combination of uncontrolled aps,
@@ -262,23 +264,84 @@ void Solver::create_arena()
                 then go to next state with owner 0
                 else do nothing
                 */
+
                 std::vector<bool> values(cond_uap.size(), false);
-                std::vector<bdd> uap_bdd;
 
                 for (int i = 0; i < cond_uap.size(); i++)
                 {
-                    uap_bdd.push_back(this->itbdd(cond_uap[i]));
-                }
-
-                for (int i = 0; i < cond_cap.size(); i++)
-                {
                     values = this->generate_binary_combinations(i, cond_uap.size());
 
+                    bdd assignment = t.cond;
                     // assign values to the condition
+                    for (int j = 0; j < values.size(); ++j)
+                    {
+                        if (values[j])
+                        {
+                            assignment = bdd_restrict(assignment, bdd_ithvar(cond_uap[j]));
+                        }
+                        else
+                        {
+                            assignment = bdd_restrict(assignment, bdd_nithvar(cond_uap[j]));
+                        }
+                    }
 
                     // check if the condition is true
+                    if (assignment == bddtrue)
+                    {
+                        owner = 1;
+                        // check if dst is already in the vertices with owner 1
+                        bool found = false;
+                        for (auto &v : vertices)
+                        {
+                            if (v->id == dst && v->owner == 1)
+                            {
+                                this->arena->new_edge(current->id, v->id, t.cond, src_prio_formatted);
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (found)
+                        {
+                            continue;
+                        }
+                        auto dst_priority = this->get_priority(dst);
+                        Vertex *new_vertex = this->create_vertex(dst, this->adjust_priority(dst_priority), owner);
+                        new_vertex->automaton_id = dst;
+                        new_vertex->conditions.try_emplace(t.cond, true);
+                        queue.push_back(new_vertex);
+                        vertices.push_back(new_vertex);
 
-                    // check if the condition has controlled aps
+                        // check if the id is already in the arena
+                        if (new_vertex->id >= this->arena->num_states())
+                        {
+                            int new_state = this->arena->new_state();
+                            new_vertex->id = new_state;
+                        }
+
+                        this->arena->new_edge(current->id, new_vertex->id, t.cond, src_prio_formatted);
+                        continue;
+                    }
+
+                    // check if the condition has controlled aps -> partial evaluation
+                    if (cond_cap.size() > 0)
+                    {
+                        owner = 0;
+                        Vertex *new_vertex = this->create_vertex(dst, this->adjust_priority(dst_priority), owner);
+                        new_vertex->automaton_id = dst;
+                        new_vertex->conditions.try_emplace(t.cond, false);
+                        queue.push_back(new_vertex);
+                        vertices.push_back(new_vertex);
+
+                        // check if the id is already in the arena
+                        if (new_vertex->id >= this->arena->num_states())
+                        {
+                            int new_state = this->arena->new_state();
+                            new_vertex->id = new_state;
+                        }
+
+                        this->arena->new_edge(current->id, new_vertex->id, t.cond, src_prio_formatted);
+                        continue;
+                    }
                 }
             } // case 3 if our current owner is player 0 => then we can only manipulate controlled ap
             else if (current->owner == 0)
