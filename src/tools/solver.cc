@@ -526,6 +526,15 @@ void Solver::create_arena()
             }
         }
     }
+
+    // set owners
+    std::vector<bool> owners(this->arena->num_states(), false);
+    for (int i = 0; i < this->arena->num_states(); i++)
+    {
+        owners[i] = vertices[i]->owner;
+    }
+
+    spot::set_state_players(this->arena, owners);
 }
 
 void Solver::solve()
@@ -536,13 +545,6 @@ void Solver::solve()
         std::cout << "Transition-based automaton reconstructed to state-based automaton" << std::endl;
     }
 
-    // std::vector<bool> owners;
-
-    // for (int i = 0; i < this->automaton->num_states(); i++)
-    // {
-    //     owners.push_back(true);
-    // }
-    // spot::set_state_players(this->automaton, owners);
 
     this->create_arena();
 
