@@ -29,6 +29,7 @@ public:
     int src;
     int dst;
     int hash_cond;
+    int priority;
     Transition_Identifier(int src, int dst, int hash_cond) : src(src), dst(dst), hash_cond(hash_cond) {}
     ~Transition_Identifier() = default;
 
