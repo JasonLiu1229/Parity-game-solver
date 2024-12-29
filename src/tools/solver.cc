@@ -366,24 +366,24 @@ void Solver::create_arena()
                     if (cond_uap.empty())
                     {
                         owner = 0;
-                        // check if src is already in the vertices with owner 0
-                        bool found = false;
+                        // // check if src is already in the vertices with owner 0
+                        // bool found = false;
 
-                        for (auto &v : vertices)
-                        {
-                            if (v->automaton_id == src && v->owner == 0)
-                            {
-                                this->arena->new_edge(current->id, v->id, t.cond, src_prio_formatted);
-                                found = true;
-                                std::pair<bdd, int> transition(t.cond, dst);
-                                v->conditions.try_emplace(transition, false);
-                                break;
-                            }
-                        }
-                        if (found)
-                        {
-                            continue;
-                        }
+                        // for (auto &v : vertices)
+                        // {
+                        //     if (v->automaton_id == src && v->owner == 0)
+                        //     {
+                        //         this->arena->new_edge(current->id, v->id, t.cond, src_prio_formatted);
+                        //         found = true;
+                        //         std::pair<bdd, int> transition(t.cond, dst);
+                        //         v->conditions.try_emplace(transition, false);
+                        //         break;
+                        //     }
+                        // }
+                        // if (found)
+                        // {
+                        //     continue;
+                        // }
 
                         // Vertex *new_vertex = this->create_vertex(vertices.size(), this->adjust_priority(src_priority), owner);
                         Vertex *new_vertex = new Vertex(vertices.size(), this->adjust_priority(src_priority), owner);
@@ -468,23 +468,23 @@ void Solver::create_arena()
                         {
                             owner = 0;
                             // check if dst is already in the vertices with owner 1
-                            bool found = false;
-                            for (auto &v : vertices)
-                            {
-                                if (v->automaton_id == src && v->owner == 1)
-                                {
-                                    std::pair<bdd, int> transition(t.cond, dst);
-                                    v->conditions.try_emplace(transition, false);
-                                    this->arena->new_edge(current->id, v->id, assignment, src_prio_formatted);
-                                    found = true;
-                                    queue.push_back(v);
-                                    break;
-                                }
-                            }
-                            if (found)
-                            {
-                                continue;
-                            }
+                            // bool found = false;
+                            // for (auto &v : vertices)
+                            // {
+                            //     if (v->automaton_id == src && v->owner == 1)
+                            //     {
+                            //         std::pair<bdd, int> transition(t.cond, dst);
+                            //         v->conditions.try_emplace(transition, false);
+                            //         this->arena->new_edge(current->id, v->id, assignment, src_prio_formatted);
+                            //         found = true;
+                            //         queue.push_back(v);
+                            //         break;
+                            //     }
+                            // }
+                            // if (found)
+                            // {
+                            //     continue;
+                            // }
                             // Vertex *new_vertex = this->create_vertex(vertices.size(), this->adjust_priority(src_priority), owner);
                             Vertex *new_vertex = new Vertex(vertices.size(), this->adjust_priority(src_priority), owner);
                             new_vertex->automaton_id = src;
