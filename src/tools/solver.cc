@@ -227,7 +227,8 @@ void Solver::create_arena()
                 }
                 // process condition with controllable aps
 
-                std::pair<bdd, int> trans = t.first;
+                // std::pair<bdd, int> trans = t.first;
+                Transition_Identifier trans = t.first;
 
                 std::vector<bool> values(this->controllable_aps.size(), false);
 
@@ -244,7 +245,7 @@ void Solver::create_arena()
                 {
                     values = this->generate_binary_combinations(i, this->controllable_aps.size());
 
-                    bdd assignment = trans.first;
+                    bdd assignment = this->partial_evaluations[trans.hash_cond];
                     for (int j = 0; j < values.size(); j++)
                     {
                         if (values[j])
@@ -265,7 +266,7 @@ void Solver::create_arena()
                         bool found = false;
                         for (auto &v : vertices)
                         {
-                            if (v->automaton_id == trans.second && v->owner == 1)
+                            if (v->automaton_id == trans.dst && v->owner == 1)
                             {
                                 this->arena->new_edge(current->id, v->id, assignment, src_prio_formatted);
                                 found = true;
@@ -279,12 +280,11 @@ void Solver::create_arena()
                             continue;
                         }
 
-                        auto dst_priority = this->get_priority(trans.second);
+                        auto dst_priority = this->get_priority(trans.dst);
                         int id = vertices.size();
                         // Vertex *new_vertex = this->create_vertex(id, this->adjust_priority(dst_priority), owner);
                         Vertex *new_vertex = new Vertex(id, this->adjust_priority(dst_priority), owner);
-                        new_vertex->automaton_id = trans.second;
-
+                        new_vertex->automaton_id = trans.dst;
                         queue.push_back(new_vertex);
                         vertices.push_back(new_vertex);
 
@@ -352,44 +352,110 @@ void Solver::create_arena()
                     src_prio_formatted = {src_priority};
                 }
 
-                if (current->owner == 1)
-                {
-                    /*
-                    generate every possible combination of uncontrolled aps,
-                    if the bdd results in true,
-                    then we can go to the next state
-                    else check if bdd has controlled aps
-                    then go to next state with owner 0
-                    else do nothing
-                    */
+                /*
+                generate every possible combination of uncontrolled aps,
+                if the bdd results in true,
+                then we can go to the next state
+                else check if bdd has controlled aps
+                then go to next state with owner 0
+                else do nothing
+                */
 
-                    if (cond_uap.empty())
+                if (cond_uap.empty())
+                {
+                    owner = 0;
+
+                    Vertex *new_vertex = new Vertex(vertices.size(), this->adjust_priority(src_priority), owner);
+                    new_vertex->automaton_id = src;
+                    this->partial_evaluations.push_back(t.cond);
+                    Transition_Identifier transition(src, dst, this->partial_evaluations.size() - 1);
+                    new_vertex->conditions.emplace(transition, false);
+                    queue.push_back(new_vertex);
+                    vertices.push_back(new_vertex);
+
+                    // check if the id is already in the arena
+                    if (new_vertex->id >= this->arena->num_states())
+                    {
+                        int new_state = this->arena->new_state();
+                        new_vertex->id = new_state;
+                    }
+
+                    this->arena->new_edge(current->id, new_vertex->id, t.cond, src_prio_formatted);
+                    continue;
+                }
+
+                std::vector<bool> values(cond_uap.size(), false);
+
+                for (int i = 0; i < cond_uap.size(); i++)
+                {
+                    values = this->generate_binary_combinations(i, cond_uap.size());
+
+                    bdd assignment = t.cond;
+                    // assign values to the condition
+                    for (int j = 0; j < values.size(); ++j)
+                    {
+                        if (values[j])
+                        {
+                            assignment = bdd_restrict(assignment, bdd_ithvar(cond_uap[j]));
+                        }
+                        else
+                        {
+                            assignment = bdd_restrict(assignment, bdd_nithvar(cond_uap[j]));
+                        }
+                    }
+
+                    // check if the condition is true
+                    if (assignment == bddtrue)
+                    {
+                        owner = 1;
+                        // check if dst is already in the vertices with owner 1
+                        bool found = false;
+                        for (auto &v : vertices)
+                        {
+                            if (v->automaton_id == dst && v->owner == 1)
+                            {
+                                this->arena->new_edge(current->id, v->id, assignment, src_prio_formatted);
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (found)
+                        {
+                            continue;
+                        }
+                        auto dst_priority = this->get_priority(dst);
+                        // Vertex *new_vertex = this->create_vertex(vertices.size(), this->adjust_priority(dst_priority), owner);
+                        Vertex *new_vertex = new Vertex(vertices.size(), this->adjust_priority(dst_priority), owner);
+                        new_vertex->automaton_id = dst;
+                        // std::pair<bdd, int> transition(t.cond, dst);
+                        this->partial_evaluations.push_back(t.cond);
+                        Transition_Identifier transition(src, dst, this->partial_evaluations.size() - 1);
+                        new_vertex->conditions.emplace(transition, true);
+                        queue.push_back(new_vertex);
+                        vertices.push_back(new_vertex);
+
+                        // check if the id is already in the arena
+                        if (new_vertex->automaton_id >= this->arena->num_states())
+                        {
+                            int new_state = this->arena->new_state();
+                            new_vertex->id = new_state;
+                        }
+
+                        this->arena->new_edge(current->id, new_vertex->id, assignment, src_prio_formatted);
+                        continue;
+                    }
+
+                    // check if the condition has controlled aps -> partial evaluation
+                    if (cond_cap.size() > 0)
                     {
                         owner = 0;
-                        // // check if src is already in the vertices with owner 0
-                        // bool found = false;
 
-                        // for (auto &v : vertices)
-                        // {
-                        //     if (v->automaton_id == src && v->owner == 0)
-                        //     {
-                        //         this->arena->new_edge(current->id, v->id, t.cond, src_prio_formatted);
-                        //         found = true;
-                        //         std::pair<bdd, int> transition(t.cond, dst);
-                        //         v->conditions.try_emplace(transition, false);
-                        //         break;
-                        //     }
-                        // }
-                        // if (found)
-                        // {
-                        //     continue;
-                        // }
-
-                        // Vertex *new_vertex = this->create_vertex(vertices.size(), this->adjust_priority(src_priority), owner);
                         Vertex *new_vertex = new Vertex(vertices.size(), this->adjust_priority(src_priority), owner);
                         new_vertex->automaton_id = src;
-                        std::pair<bdd, int> transition(t.cond, dst);
-                        new_vertex->conditions.try_emplace(transition, false);
+                        // std::pair<bdd, int> transition(t.cond, dst);
+                        this->partial_evaluations.push_back(t.cond);
+                        Transition_Identifier transition(src, dst, this->partial_evaluations.size() - 1);
+                        new_vertex->conditions.emplace(transition, false);
                         queue.push_back(new_vertex);
                         vertices.push_back(new_vertex);
 
@@ -400,109 +466,8 @@ void Solver::create_arena()
                             new_vertex->id = new_state;
                         }
 
-                        this->arena->new_edge(current->id, new_vertex->id, t.cond, src_prio_formatted);
+                        this->arena->new_edge(current->id, new_vertex->id, assignment, src_prio_formatted);
                         continue;
-                    }
-
-                    std::vector<bool> values(cond_uap.size(), false);
-
-                    for (int i = 0; i < cond_uap.size(); i++)
-                    {
-                        values = this->generate_binary_combinations(i, cond_uap.size());
-
-                        bdd assignment = t.cond;
-                        // assign values to the condition
-                        for (int j = 0; j < values.size(); ++j)
-                        {
-                            if (values[j])
-                            {
-                                assignment = bdd_restrict(assignment, bdd_ithvar(cond_uap[j]));
-                            }
-                            else
-                            {
-                                assignment = bdd_restrict(assignment, bdd_nithvar(cond_uap[j]));
-                            }
-                        }
-
-                        // check if the condition is true
-                        if (assignment == bddtrue)
-                        {
-                            owner = 1;
-                            // check if dst is already in the vertices with owner 1
-                            bool found = false;
-                            for (auto &v : vertices)
-                            {
-                                if (v->automaton_id == dst && v->owner == 1)
-                                {
-                                    this->arena->new_edge(current->id, v->id, assignment, src_prio_formatted);
-                                    found = true;
-                                    break;
-                                }
-                            }
-                            if (found)
-                            {
-                                continue;
-                            }
-                            auto dst_priority = this->get_priority(dst);
-                            // Vertex *new_vertex = this->create_vertex(vertices.size(), this->adjust_priority(dst_priority), owner);
-                            Vertex *new_vertex = new Vertex(vertices.size(), this->adjust_priority(dst_priority), owner);
-                            new_vertex->automaton_id = dst;
-                            std::pair<bdd, int> transition(t.cond, dst);
-                            new_vertex->conditions.try_emplace(transition, true);
-                            queue.push_back(new_vertex);
-                            vertices.push_back(new_vertex);
-
-                            // check if the id is already in the arena
-                            if (new_vertex->automaton_id >= this->arena->num_states())
-                            {
-                                int new_state = this->arena->new_state();
-                                new_vertex->id = new_state;
-                            }
-
-                            this->arena->new_edge(current->id, new_vertex->id, assignment, src_prio_formatted);
-                            continue;
-                        }
-
-                        // check if the condition has controlled aps -> partial evaluation
-                        if (cond_cap.size() > 0)
-                        {
-                            owner = 0;
-                            // check if dst is already in the vertices with owner 1
-                            // bool found = false;
-                            // for (auto &v : vertices)
-                            // {
-                            //     if (v->automaton_id == src && v->owner == 1)
-                            //     {
-                            //         std::pair<bdd, int> transition(t.cond, dst);
-                            //         v->conditions.try_emplace(transition, false);
-                            //         this->arena->new_edge(current->id, v->id, assignment, src_prio_formatted);
-                            //         found = true;
-                            //         queue.push_back(v);
-                            //         break;
-                            //     }
-                            // }
-                            // if (found)
-                            // {
-                            //     continue;
-                            // }
-                            // Vertex *new_vertex = this->create_vertex(vertices.size(), this->adjust_priority(src_priority), owner);
-                            Vertex *new_vertex = new Vertex(vertices.size(), this->adjust_priority(src_priority), owner);
-                            new_vertex->automaton_id = src;
-                            std::pair<bdd, int> transition(t.cond, dst);
-                            new_vertex->conditions.try_emplace(transition, false);
-                            queue.push_back(new_vertex);
-                            vertices.push_back(new_vertex);
-
-                            // check if the id is already in the arena
-                            if (new_vertex->id >= this->arena->num_states())
-                            {
-                                int new_state = this->arena->new_state();
-                                new_vertex->id = new_state;
-                            }
-
-                            this->arena->new_edge(current->id, new_vertex->id, assignment, src_prio_formatted);
-                            continue;
-                        }
                     }
                 }
             }

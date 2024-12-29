@@ -23,6 +23,33 @@
 #include <string>
 #include <bits/stdc++.h>
 
+class Transition_Identifier
+{
+public:
+    int src;
+    int dst;
+    int hash_cond;
+    Transition_Identifier(int src, int dst, int hash_cond) : src(src), dst(dst), hash_cond(hash_cond) {}
+    ~Transition_Identifier() = default;
+
+    bool operator==(const Transition_Identifier &other) const noexcept
+    {
+        return this->src == other.src && this->dst == other.dst && this->hash_cond == other.hash_cond;
+    }
+};
+
+namespace std
+{
+    template <>
+    struct hash<Transition_Identifier>
+    {
+        std::size_t operator()(const Transition_Identifier &t) const noexcept
+        {
+            return std::hash<int>()(t.src) ^ std::hash<int>()(t.dst) ^ std::hash<int>()(t.hash_cond);
+        }
+    };
+}
+
 class Vertex
 {
 public:
@@ -30,7 +57,9 @@ public:
     int automaton_id;
     int priority;
     int owner;
-    std::map<std::pair<bdd, int>, bool> conditions;
+
+    std::unordered_map<Transition_Identifier, bool> conditions;
+
     Vertex(int id, int priority, int owner) : id(id), priority(priority), owner(owner) {}
     ~Vertex() = default;
 };
@@ -40,6 +69,7 @@ class Solver
     spot::twa_graph_ptr automaton;
     spot::twa_graph_ptr arena = nullptr;
 
+    std::vector<bdd> partial_evaluations;
     std::vector<int> controllable_aps;
     bool isMax = true;
     bool isEven = true;

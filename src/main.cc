@@ -11,7 +11,7 @@ int main()
     auto aut = parser.parse(INPUT_FILE);
 
     Solver solver(aut, parser.getControllableAPs(), parser.isMax(), parser.isEven(), parser.getNoPriorities());
-    // solver.solve();
+    solver.solve();
 
     // aut = solver.get_automaton();
 
