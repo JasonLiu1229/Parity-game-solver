@@ -2,5 +2,6 @@
 
 ./build.sh
 
-# Optionally, run the program
+cd ../build
+
 ./test
