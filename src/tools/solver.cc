@@ -147,8 +147,6 @@ std::vector<int> Solver::get_subset_aps_from_cond(bdd cond, const std::vector<in
         }
     }
 
-    // ============================
-
     return subset_aps;
 }
 
@@ -459,7 +457,7 @@ void Solver::solve()
 
     this->create_arena();
 
-    // bool output = spot::solve_parity_game(this->arena);
-    // spot::highlight_strategy(this->arena);
-    // std::cout << output << std::endl;
+    bool output = spot::solve_parity_game(this->arena);
+    spot::highlight_strategy(this->arena);
+    std::cout << output << std::endl;
 }
