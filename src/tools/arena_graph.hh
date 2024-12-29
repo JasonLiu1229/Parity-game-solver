@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <set>
 
 #include <spot/twa/twagraph.hh>
 #include <spot/twaalgos/game.hh>
@@ -13,7 +14,7 @@ typedef struct Node
 {
     int id;
     int owner;
-    std::vector<int> successors;
+    std::set<int> successors;
 } Node;
 
 class ArenaGraph

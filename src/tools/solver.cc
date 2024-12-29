@@ -156,6 +156,8 @@ void Solver::create_arena()
 
     // create arena
     this->arena = spot::make_twa_graph(dict);
+    this->arena->set_acceptance(this->automaton->get_acceptance());
+
     this->arena->new_states(1); // start with 10 states because it is HUUUUUUUGE
 
     std::vector<Vertex *> queue;
@@ -252,7 +254,7 @@ void Solver::create_arena()
                         {
                             if (v->automaton_id == dst && v->owner == 1)
                             {
-                                this->arena->new_edge(current->id, v->id, bdd_true(), src_prio_formatted);
+                                this->arena->new_edge(current->id, v->id, assignment, src_prio_formatted);
                                 found = true;
                                 break;
                             }
@@ -277,7 +279,7 @@ void Solver::create_arena()
                             new_vertex->id = new_state;
                         }
 
-                        this->arena->new_edge(current->id, new_vertex->id, bdd_true(), src_prio_formatted);
+                        this->arena->new_edge(current->id, new_vertex->id, assignment, src_prio_formatted);
                     }
                     else if (assignment == bdd_false())
                     {
@@ -309,7 +311,7 @@ void Solver::create_arena()
                             new_vertex->id = new_state;
                         }
 
-                        this->arena->new_edge(current->id, new_vertex->id, bdd_true(), src_prio_formatted);
+                        this->arena->new_edge(current->id, new_vertex->id, assignment, src_prio_formatted);
                     }
                 }
             }
@@ -374,7 +376,7 @@ void Solver::create_arena()
                         {
                             if (v->automaton_id == trans.dst && v->owner == 1)
                             {
-                                this->arena->new_edge(current->id, v->id, bdd_true(), formatted_prio);
+                                this->arena->new_edge(current->id, v->id, assignment, formatted_prio);
                                 found = true;
                                 break;
                             }
@@ -397,7 +399,7 @@ void Solver::create_arena()
                             new_vertex->id = new_state;
                         }
 
-                        this->arena->new_edge(current->id, new_vertex->id, bdd_true(), formatted_prio);
+                        this->arena->new_edge(current->id, new_vertex->id, assignment, formatted_prio);
                     }
                     else
                     {
@@ -432,7 +434,7 @@ void Solver::create_arena()
                             new_vertex->id = new_state;
                         }
 
-                        this->arena->new_edge(current->id, new_vertex->id, bdd_true(), {});
+                        this->arena->new_edge(current->id, new_vertex->id, assignment, {});
                     }
                 }
 
@@ -456,7 +458,8 @@ void Solver::solve()
 
     this->create_arena();
 
-    bool output = spot::solve_parity_game(this->arena);
+    bool output = spot::solve_game(this->arena);
+
     spot::highlight_strategy(this->arena);
     std::string EveWin = output ? "yes" : "no";
     std::cout << "Eve can win: " << EveWin << std::endl;

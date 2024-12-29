@@ -13,7 +13,7 @@ void ArenaGraph::parse_arena()
 
         for (auto &t : this->arena->out(i))
         {
-            node.successors.push_back(t.dst);
+            node.successors.insert(t.dst);
         }
 
         this->nodes.push_back(node);
