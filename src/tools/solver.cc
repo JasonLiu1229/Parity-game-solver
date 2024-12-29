@@ -99,11 +99,6 @@ int Solver::adjust_priority(int priority)
     return new_priority;
 }
 
-Vertex *Solver::create_vertex(int id, int priority, int owner)
-{
-    return new Vertex(id, priority, owner);
-}
-
 std::vector<bool> Solver::generate_binary_combinations(int n, int size)
 {
     std::vector<bool> values(size, false);
@@ -115,25 +110,6 @@ std::vector<bool> Solver::generate_binary_combinations(int n, int size)
     }
 
     return values;
-}
-
-// int to bdd
-bdd Solver::itbdd(int i)
-{
-    spot::bdd_dict_ptr dict = this->automaton->get_dict();
-
-    auto variable_map = dict->var_map;
-
-    assert(i >= variable_map.size());
-
-    for (auto &it : variable_map)
-    {
-        if (i == it.second)
-        {
-            return bdd_ithvar(it.second);
-        }
-    }
-    return bdd_true();
 }
 
 std::vector<int> Solver::get_subset_aps_from_cond(bdd cond, const std::vector<int> &ap)
@@ -208,7 +184,8 @@ void Solver::create_arena()
     int priority = this->get_priority(init_state);
 
     int owner = 1;
-    Vertex *init_vertex = this->create_vertex(init_state, this->adjust_priority(priority), owner);
+
+    Vertex *init_vertex = new Vertex(init_state, this->adjust_priority(priority), owner);
 
     queue.push_back(init_vertex);
     vertices.push_back(init_vertex);
@@ -304,7 +281,8 @@ void Solver::create_arena()
 
                         auto dst_priority = this->get_priority(trans.second);
                         int id = vertices.size();
-                        Vertex *new_vertex = this->create_vertex(id, this->adjust_priority(dst_priority), owner);
+                        // Vertex *new_vertex = this->create_vertex(id, this->adjust_priority(dst_priority), owner);
+                        Vertex *new_vertex = new Vertex(id, this->adjust_priority(dst_priority), owner);
                         new_vertex->automaton_id = trans.second;
 
                         queue.push_back(new_vertex);
@@ -338,7 +316,8 @@ void Solver::create_arena()
                             continue;
                         }
 
-                        Vertex *new_vertex = this->create_vertex(vertices.size(), this->adjust_priority(src_priority), owner);
+                        // Vertex *new_vertex = this->create_vertex(vertices.size(), this->adjust_priority(src_priority), owner);
+                        Vertex *new_vertex = new Vertex(vertices.size(), this->adjust_priority(src_priority), owner);
                         new_vertex->automaton_id = state;
 
                         queue.push_back(new_vertex);
@@ -360,8 +339,8 @@ void Solver::create_arena()
         {
             for (auto &t : this->automaton->out(state))
             {
-                int src = t.src;
-                int dst = t.dst;
+                unsigned int src = t.src;
+                unsigned int dst = t.dst;
 
                 std::vector<int> cond_uap = this->get_subset_aps_from_cond(t.cond, uap);
                 std::vector<int> cond_cap = this->get_subset_aps_from_cond(t.cond, this->controllable_aps);
@@ -384,7 +363,7 @@ void Solver::create_arena()
                     else do nothing
                     */
 
-                    if (cond_uap.size() == 0)
+                    if (cond_uap.empty())
                     {
                         owner = 0;
                         // check if src is already in the vertices with owner 0
@@ -406,7 +385,8 @@ void Solver::create_arena()
                             continue;
                         }
 
-                        Vertex *new_vertex = this->create_vertex(vertices.size(), this->adjust_priority(src_priority), owner);
+                        // Vertex *new_vertex = this->create_vertex(vertices.size(), this->adjust_priority(src_priority), owner);
+                        Vertex *new_vertex = new Vertex(vertices.size(), this->adjust_priority(src_priority), owner);
                         new_vertex->automaton_id = src;
                         std::pair<bdd, int> transition(t.cond, dst);
                         new_vertex->conditions.try_emplace(transition, false);
@@ -464,7 +444,8 @@ void Solver::create_arena()
                                 continue;
                             }
                             auto dst_priority = this->get_priority(dst);
-                            Vertex *new_vertex = this->create_vertex(vertices.size(), this->adjust_priority(dst_priority), owner);
+                            // Vertex *new_vertex = this->create_vertex(vertices.size(), this->adjust_priority(dst_priority), owner);
+                            Vertex *new_vertex = new Vertex(vertices.size(), this->adjust_priority(dst_priority), owner);
                             new_vertex->automaton_id = dst;
                             std::pair<bdd, int> transition(t.cond, dst);
                             new_vertex->conditions.try_emplace(transition, true);
@@ -504,7 +485,8 @@ void Solver::create_arena()
                             {
                                 continue;
                             }
-                            Vertex *new_vertex = this->create_vertex(vertices.size(), this->adjust_priority(src_priority), owner);
+                            // Vertex *new_vertex = this->create_vertex(vertices.size(), this->adjust_priority(src_priority), owner);
+                            Vertex *new_vertex = new Vertex(vertices.size(), this->adjust_priority(src_priority), owner);
                             new_vertex->automaton_id = src;
                             std::pair<bdd, int> transition(t.cond, dst);
                             new_vertex->conditions.try_emplace(transition, false);
@@ -544,7 +526,6 @@ void Solver::solve()
         this->reconstruct_transition_based_to_state_based();
         std::cout << "Transition-based automaton reconstructed to state-based automaton" << std::endl;
     }
-
 
     this->create_arena();
 

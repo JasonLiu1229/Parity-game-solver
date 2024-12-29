@@ -64,21 +64,13 @@ private:
 
     void reconstruct_transition_based_to_state_based();
 
-    void build_state_based_game();
-
     void create_arena();
-
-    Vertex *create_vertex(int id, int priority, int owner);
 
     int adjust_priority(int priority);
 
     std::vector<int> get_subset_aps_from_cond(bdd cond, const std::vector<int> &ap);
 
     std::vector<bool> generate_binary_combinations(int n, int size);
-
-    bdd itbdd(int i);
-
-    void set_state_players();
 };
 
 #endif // SOLVER_HH
