@@ -15,6 +15,8 @@ void ArenaGraph::parse_arena()
         {
             node.successors.push_back(t.dst);
         }
+
+        this->nodes.push_back(node);
     }
 
     std::cout << "Parsing done" << std::endl;

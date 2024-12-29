@@ -156,8 +156,7 @@ void Solver::create_arena()
 
     // create arena
     this->arena = spot::make_twa_graph(dict);
-    this->arena->new_states(10); // start with 10 states because it is HUUUUUUUGE
-    this->arena->set_init_state(this->automaton->get_init_state_number());
+    this->arena->new_states(1); // start with 10 states because it is HUUUUUUUGE
 
     std::vector<Vertex *> queue;
 
@@ -193,7 +192,7 @@ void Solver::create_arena()
 
     int owner = 1;
 
-    Vertex *init_vertex = new Vertex(init_state, this->adjust_priority(priority), owner);
+    Vertex *init_vertex = new Vertex(0, this->adjust_priority(priority), owner);
     init_vertex->automaton_id = init_state;
 
     queue.push_back(init_vertex);
@@ -253,7 +252,7 @@ void Solver::create_arena()
                         {
                             if (v->automaton_id == dst && v->owner == 1)
                             {
-                                this->arena->new_edge(current->id, v->id, assignment, src_prio_formatted);
+                                this->arena->new_edge(current->id, v->id, bdd_true(), src_prio_formatted);
                                 found = true;
                                 break;
                             }
@@ -278,7 +277,7 @@ void Solver::create_arena()
                             new_vertex->id = new_state;
                         }
 
-                        this->arena->new_edge(current->id, new_vertex->id, assignment, src_prio_formatted);
+                        this->arena->new_edge(current->id, new_vertex->id, bdd_true(), src_prio_formatted);
                     }
                     else if (assignment == bdd_false())
                     {
@@ -310,7 +309,7 @@ void Solver::create_arena()
                             new_vertex->id = new_state;
                         }
 
-                        this->arena->new_edge(current->id, new_vertex->id, assignment, src_prio_formatted);
+                        this->arena->new_edge(current->id, new_vertex->id, bdd_true(), src_prio_formatted);
                     }
                 }
             }
@@ -375,7 +374,7 @@ void Solver::create_arena()
                         {
                             if (v->automaton_id == trans.dst && v->owner == 1)
                             {
-                                this->arena->new_edge(current->id, v->id, assignment, formatted_prio);
+                                this->arena->new_edge(current->id, v->id, bdd_true(), formatted_prio);
                                 found = true;
                                 break;
                             }
@@ -398,7 +397,7 @@ void Solver::create_arena()
                             new_vertex->id = new_state;
                         }
 
-                        this->arena->new_edge(current->id, new_vertex->id, assignment, formatted_prio);
+                        this->arena->new_edge(current->id, new_vertex->id, bdd_true(), formatted_prio);
                     }
                     else
                     {
@@ -433,7 +432,7 @@ void Solver::create_arena()
                             new_vertex->id = new_state;
                         }
 
-                        this->arena->new_edge(current->id, new_vertex->id, assignment, {});
+                        this->arena->new_edge(current->id, new_vertex->id, bdd_true(), {});
                     }
                 }
 
@@ -459,5 +458,6 @@ void Solver::solve()
 
     bool output = spot::solve_parity_game(this->arena);
     spot::highlight_strategy(this->arena);
-    std::cout << output << std::endl;
+    std::string EveWin = output ? "yes" : "no";
+    std::cout << "Eve can win: " << EveWin << std::endl;
 }
