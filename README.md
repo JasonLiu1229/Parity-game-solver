@@ -6,7 +6,7 @@ See: [HOA-TOOLS](https://github.com/SYNTCOMP/hoa-tools).
 ## How to run
 
 ```sh
-cd src
+cd src/scripts
 
 ./main.sh
 ```
@@ -14,7 +14,7 @@ cd src
 ## How to test
 
 ```sh
-cd src
+cd src/scripts
 
 ./test.sh
 ```
