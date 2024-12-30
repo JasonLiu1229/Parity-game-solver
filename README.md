@@ -22,7 +22,7 @@ cd src/scripts
 ./test.sh
 ```
 
-## Code explanationed
+## Code explained
 
 In the `tools/` directory you can find several libraries made making use of `spot`.
 
