@@ -36,6 +36,12 @@ We also have a benchmarking tester, this needs an input directory where all the 
 
 ## Packages
 
-Spot parser
+These are some packages I made use of. The BuDDy package is preinstalled with spot, so that should work without installing BuDDy itself.
 
-BuDDy BDD objects
+1. Spot parser
+
+2. BuDDy BDD objects
+
+## Help
+
+Check the `CmakeList.txt` just in case to check where I install the packages. In case this is different from your download path, make sure you change this before running the scripts or else this will not work. I installed based on the installation guide of Spot, so make sure you check that out first before running the project.
