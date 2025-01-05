@@ -98,7 +98,7 @@ void Tester::test_single_solver(std::string input_file)
     Parser parser;
     auto aut = parser.parse(input_file);
 
-    Solver solver(aut, parser.getControllableAPs());
+    Solver solver(aut, parser.getControllableAPs(), parser.isMax(), parser.isEven(), parser.getNoPriorities());
     solver.solve();
 
     // end of timer
