@@ -8,6 +8,8 @@ See: [HOA-TOOLS](https://github.com/SYNTCOMP/hoa-tools).
 
 ### How to run
 
+Small code example to test.
+
 ```sh
 cd src/scripts
 
@@ -15,6 +17,8 @@ cd src/scripts
 ```
 
 ### How to test
+
+The test script is used to run all the examples files provided in the repository. It will give an output with an duration of how long this process took. Not only that, it will also provide an output stating if Eve can win in this parity game.
 
 ```sh
 cd src/scripts
